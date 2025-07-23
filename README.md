@@ -49,6 +49,8 @@ FINNHUB_API_KEY=your_finnhub_api_key_here
 docker-compose up -d
 ```
 
+**Important**: The database will automatically initialize with demo data including the admin user.
+
 ### 4. Start the Backend
 ```bash
 cd backend
@@ -81,6 +83,26 @@ The application comes pre-loaded with demo data including:
 **Advisor Login:**
 - Username: `ii-Admin`
 - Password: `RayJay1!`
+
+## Troubleshooting
+
+### Database Connection Issues
+If you get database connection errors:
+1. Ensure Docker is running
+2. Run `docker-compose down -v` to reset the database
+3. Run `docker-compose up -d` to restart with fresh data
+
+### Maven Wrapper Issues
+If `./mvnw` doesn't work:
+1. Ensure you're in the `backend` directory
+2. Try `mvnw.cmd` on Windows
+3. The Maven wrapper files are included in the repository
+
+### Frontend Issues
+If the frontend folder appears empty:
+1. The frontend is now included as a regular folder (not a submodule)
+2. Run `npm install` in the frontend directory
+3. Ensure Node.js 18+ is installed
 
 ## Demo Clients & Portfolios
 

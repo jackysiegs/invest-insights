@@ -4,7 +4,7 @@
 -- Insert the ii-Admin advisor
 -- Password: RayJay1! (BCrypt hash)
 INSERT INTO advisor (id, name, email, username, password_hash, created_at) 
-VALUES (1, 'ii-Admin', 'admin@investinsights.com', 'ii-Admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', CURRENT_TIMESTAMP)
+VALUES (1, 'ii-Admin', 'admin@investinsights.com', 'ii-Admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa', CURRENT_TIMESTAMP)
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert demo clients
