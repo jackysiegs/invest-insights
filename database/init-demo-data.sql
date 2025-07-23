@@ -2,18 +2,18 @@
 -- This script creates the ii-Admin advisor and demo clients with portfolios
 
 -- Insert the ii-Admin advisor
--- Password: RayJay1! (BCrypt hash)
+-- Password: RayJay1! (BCrypt hash from working system)
 INSERT INTO advisor (id, name, email, username, password_hash, created_at) 
-VALUES (1, 'ii-Admin', 'admin@investinsights.com', 'ii-Admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVEFDa', CURRENT_TIMESTAMP)
+VALUES (11, 'Admin User', 'admin@investinsights.com', 'ii-Admin', '$2a$10$CUbulPsoTxQlqMb0s86kFedD4kenS0vJZNWqkeCVLkqdrySGTTQJK', CURRENT_TIMESTAMP)
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert demo clients
 INSERT INTO client (id, name, email, risk_tolerance, investment_goal, time_horizon, advisor_id, created_at) VALUES
-(1, 'Sashank Pandem', 'sashank.pandem@email.com', 'Moderate', 'Retirement savings', 25, 1, CURRENT_TIMESTAMP),
-(2, 'Jack Siegel', 'jack.siegel@email.com', 'Aggressive', 'Wealth building', 15, 1, CURRENT_TIMESTAMP),
-(3, 'Sarah Chen', 'sarah.chen@email.com', 'Conservative', 'Income generation', 10, 1, CURRENT_TIMESTAMP),
-(4, 'Michael Rodriguez', 'michael.rodriguez@email.com', 'Moderate', 'College savings', 8, 1, CURRENT_TIMESTAMP),
-(5, 'Emily Watson', 'emily.watson@email.com', 'Aggressive', 'Early retirement', 20, 1, CURRENT_TIMESTAMP)
+(1, 'Sashank Pandem', 'sashank.pandem@email.com', 'Moderate', 'Retirement savings', 25, 11, CURRENT_TIMESTAMP),
+(2, 'Jack Siegel', 'jack.siegel@email.com', 'Aggressive', 'Wealth building', 15, 11, CURRENT_TIMESTAMP),
+(3, 'Sarah Chen', 'sarah.chen@email.com', 'Conservative', 'Income generation', 10, 11, CURRENT_TIMESTAMP),
+(4, 'Michael Rodriguez', 'michael.rodriguez@email.com', 'Moderate', 'College savings', 8, 11, CURRENT_TIMESTAMP),
+(5, 'Emily Watson', 'emily.watson@email.com', 'Aggressive', 'Early retirement', 20, 11, CURRENT_TIMESTAMP)
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert portfolios for each client
