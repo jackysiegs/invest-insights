@@ -7,7 +7,7 @@ A comprehensive financial portfolio analysis application that combines mathemati
 - **Portfolio Analysis**: Mathematical scoring for risk, diversification, and goal alignment
 - **AI-Powered Insights**: Qualitative analysis using OpenAI GPT-4 with hybrid scoring approach
 - **Real-time Market Data**: Integration with Finnhub API for market news and company-specific updates
-- **Modern UI**: Glassmorphism design with responsive layout
+- **Modern UI**: Template design for now but intended to be a Glassmorphism design with responsive layout
 - **Multi-Client Management**: Advisor dashboard for managing multiple client portfolios
 - **Comprehensive Reporting**: Detailed analysis with actionable recommendations
 
