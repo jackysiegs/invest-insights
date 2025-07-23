@@ -1,0 +1,184 @@
+{
+  "holdings": [
+    {
+      "ticker": "AAPL",
+      "shares": 150,
+      "pricePerShare": 175.50,
+      "sector": "Technology",
+      "assetType": "Stock",
+      "beta": 1.25,
+      "dividendYield": 0.55
+    },
+    {
+      "ticker": "MSFT",
+      "shares": 200,
+      "pricePerShare": 320.75,
+      "sector": "Technology",
+      "assetType": "Stock",
+      "beta": 1.15,
+      "dividendYield": 0.85
+    },
+    {
+      "ticker": "GOOGL",
+      "shares": 50,
+      "pricePerShare": 145.20,
+      "sector": "Technology",
+      "assetType": "Stock",
+      "beta": 1.10,
+      "dividendYield": 0.00
+    },
+    {
+      "ticker": "AMZN",
+      "shares": 100,
+      "pricePerShare": 135.80,
+      "sector": "Consumer Discretionary",
+      "assetType": "Stock",
+      "beta": 1.35,
+      "dividendYield": 0.00
+    },
+    {
+      "ticker": "TSLA",
+      "shares": 75,
+      "pricePerShare": 245.30,
+      "sector": "Consumer Discretionary",
+      "assetType": "Stock",
+      "beta": 2.15,
+      "dividendYield": 0.00
+    },
+    {
+      "ticker": "JNJ",
+      "shares": 120,
+      "pricePerShare": 165.40,
+      "sector": "Healthcare",
+      "assetType": "Stock",
+      "beta": 0.65,
+      "dividendYield": 2.85
+    },
+    {
+      "ticker": "PG",
+      "shares": 200,
+      "pricePerShare": 145.60,
+      "sector": "Consumer Staples",
+      "assetType": "Stock",
+      "beta": 0.45,
+      "dividendYield": 2.45
+    },
+    {
+      "ticker": "JPM",
+      "shares": 150,
+      "pricePerShare": 185.90,
+      "sector": "Financial Services",
+      "assetType": "Stock",
+      "beta": 1.05,
+      "dividendYield": 2.75
+    },
+    {
+      "ticker": "V",
+      "shares": 100,
+      "pricePerShare": 275.30,
+      "sector": "Financial Services",
+      "assetType": "Stock",
+      "beta": 0.95,
+      "dividendYield": 0.75
+    },
+    {
+      "ticker": "UNH",
+      "shares": 80,
+      "pricePerShare": 485.70,
+      "sector": "Healthcare",
+      "assetType": "Stock",
+      "beta": 0.85,
+      "dividendYield": 1.45
+    },
+    {
+      "ticker": "HD",
+      "shares": 90,
+      "pricePerShare": 325.40,
+      "sector": "Consumer Discretionary",
+      "assetType": "Stock",
+      "beta": 1.05,
+      "dividendYield": 2.35
+    },
+    {
+      "ticker": "DIS",
+      "shares": 200,
+      "pricePerShare": 85.20,
+      "sector": "Communication Services",
+      "assetType": "Stock",
+      "beta": 1.45,
+      "dividendYield": 0.00
+    },
+    {
+      "ticker": "NFLX",
+      "shares": 60,
+      "pricePerShare": 485.30,
+      "sector": "Communication Services",
+      "assetType": "Stock",
+      "beta": 1.55,
+      "dividendYield": 0.00
+    },
+    {
+      "ticker": "NVDA",
+      "shares": 40,
+      "pricePerShare": 485.90,
+      "sector": "Technology",
+      "assetType": "Stock",
+      "beta": 1.85,
+      "dividendYield": 0.15
+    },
+    {
+      "ticker": "META",
+      "shares": 120,
+      "pricePerShare": 385.60,
+      "sector": "Communication Services",
+      "assetType": "Stock",
+      "beta": 1.35,
+      "dividendYield": 0.00
+    },
+    {
+      "ticker": "SPY",
+      "shares": 500,
+      "pricePerShare": 485.20,
+      "sector": "Diversified",
+      "assetType": "ETF",
+      "beta": 1.00,
+      "dividendYield": 1.45
+    },
+    {
+      "ticker": "QQQ",
+      "shares": 300,
+      "pricePerShare": 385.40,
+      "sector": "Technology",
+      "assetType": "ETF",
+      "beta": 1.25,
+      "dividendYield": 0.65
+    },
+    {
+      "ticker": "VTI",
+      "shares": 400,
+      "pricePerShare": 245.80,
+      "sector": "Diversified",
+      "assetType": "ETF",
+      "beta": 1.00,
+      "dividendYield": 1.85
+    },
+    {
+      "ticker": "BND",
+      "shares": 1000,
+      "pricePerShare": 75.40,
+      "sector": "Fixed Income",
+      "assetType": "ETF",
+      "beta": 0.15,
+      "dividendYield": 3.25
+    },
+    {
+      "ticker": "GLD",
+      "shares": 200,
+      "pricePerShare": 185.60,
+      "sector": "Commodities",
+      "assetType": "ETF",
+      "beta": 0.05,
+      "dividendYield": 0.00
+    }
+  ]
+} 

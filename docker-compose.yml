@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: invest_insights_db
+    environment:
+      POSTGRES_DB: invest_insights
+      POSTGRES_USER: iiAdmin
+      POSTGRES_PASSWORD: RayJay1!
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init-demo-data.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iiAdmin -d invest_insights"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local 
