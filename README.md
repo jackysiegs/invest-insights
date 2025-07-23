@@ -2,7 +2,7 @@
 
 A comprehensive financial portfolio analysis application that combines mathematical scoring with AI-generated qualitative insights. Built with Spring Boot, Angular, and OpenAI GPT-4.
 
-## 🚀 Features
+## Features
 
 - **Portfolio Analysis**: Mathematical scoring for risk, diversification, and goal alignment
 - **AI-Powered Insights**: Qualitative analysis using OpenAI GPT-4 with hybrid scoring approach
@@ -11,7 +11,7 @@ A comprehensive financial portfolio analysis application that combines mathemati
 - **Multi-Client Management**: Advisor dashboard for managing multiple client portfolios
 - **Comprehensive Reporting**: Detailed analysis with actionable recommendations
 
-## 🏗️ Architecture
+## Architecture
 
 - **Backend**: Java Spring Boot with PostgreSQL
 - **Frontend**: Angular 17 with modern UI components
@@ -19,7 +19,7 @@ A comprehensive financial portfolio analysis application that combines mathemati
 - **Database**: PostgreSQL with Docker Compose setup
 - **APIs**: Finnhub for market data, OpenAI for AI insights
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Java 17 or higher
 - Node.js 18 or higher
@@ -27,7 +27,7 @@ A comprehensive financial portfolio analysis application that combines mathemati
 - OpenAI API key
 - Finnhub API key
 
-## 🛠️ Quick Setup
+## Quick Setup
 
 ### 1. Clone the Repository
 ```bash
@@ -74,7 +74,7 @@ ng serve
 - Backend API: http://localhost:8080
 - AI Microservice: http://localhost:8000
 
-## 🔐 Demo Login
+## Demo Login
 
 The application comes pre-loaded with demo data including:
 
@@ -82,7 +82,7 @@ The application comes pre-loaded with demo data including:
 - Username: `ii-Admin`
 - Password: `RayJay1!`
 
-## 👥 Demo Clients & Portfolios
+## Demo Clients & Portfolios
 
 The system includes comprehensive demo data showcasing various portfolio scenarios:
 
@@ -117,7 +117,7 @@ The system includes comprehensive demo data showcasing various portfolio scenari
 - **Single Stock Risk**: Extreme risk (9/10), very low diversification (25%), poor goal alignment (45%)
 - **International Focus**: Moderate risk (6/10), moderate diversification (65%), currency risk concerns
 
-## 🔧 Configuration
+## Configuration
 
 ### Database Configuration
 The application uses PostgreSQL with the following default settings:
@@ -140,7 +140,7 @@ FINNHUB_API_KEY=your_finnhub_api_key_here
 
 **Security Note**: The `.env` file is automatically ignored by Git to prevent accidental exposure of API keys. Each user must create their own `.env` file with their actual API keys.
 
-## 🧪 Testing the System
+## Testing the System
 
 1. **Login as ii-Admin**
 2. **Select different clients** to see various portfolio scenarios
@@ -148,7 +148,7 @@ FINNHUB_API_KEY=your_finnhub_api_key_here
 4. **Compare portfolios** to understand risk and diversification differences
 5. **View market news** integration in AI insights
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 rj-invest-insights/
@@ -164,7 +164,7 @@ rj-invest-insights/
 └── README.md              # This file
 ```
 
-### 📂 Folder Details
+### Folder Details
 
 - **`backend/`**: Spring Boot REST API with portfolio analysis logic
 - **`frontend/`**: Angular 17 application with modern UI
@@ -175,22 +175,10 @@ rj-invest-insights/
 - **`tests/`**: Python test scripts for AI improvements and validation
 - **`data/`**: Sample data files and API testing examples
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
-
-For support, please open an issue on GitHub or contact the development team.
-
-## 🔄 Updates
-
-The demo data includes realistic market prices and portfolio compositions that showcase the full range of the system's analytical capabilities. The AI insights are generated in real-time based on current market conditions and portfolio characteristics. 
