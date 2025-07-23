@@ -1,0 +1,696 @@
+<div class="app-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <h1>💰 Invest Insights</h1>
+      </div>
+      
+      <!-- Recent Users Selector -->
+      <div class="recent-users-selector">
+        <label for="recentUsersSearchInput">Clients:</label>
+        <div class="recent-users-dropdown-wrapper">
+          <input 
+            type="text" 
+            id="recentUsersSearchInput"
+            class="recent-users-search-input" 
+            [placeholder]="selectedClient ? selectedClient.name : 'Search recent users...'"
+            [(ngModel)]="recentUsersSearchTerm"
+            (input)="onRecentUsersSearch()"
+            (focus)="onRecentUsersSearchFocus()"
+            (blur)="onRecentUsersSearchBlur()"
+          >
+          <span class="search-icon" *ngIf="!selectedClient">🔍</span>
+          <button 
+            *ngIf="selectedClient" 
+            class="clear-selection-btn"
+            (click)="clearSelectedClient()"
+            title="Clear selection"
+          >
+            ✕
+          </button>
+          
+          <!-- Dropdown List -->
+          <div class="recent-users-dropdown-list" *ngIf="isRecentUsersDropdownOpen && filteredRecentUsers.length > 0">
+            <div 
+              *ngFor="let client of filteredRecentUsers" 
+              class="recent-users-dropdown-item"
+              (click)="selectRecentUser(client)"
+            >
+              <div class="client-name">{{ client.name }}</div>
+              <div class="client-details">
+                <span class="client-email">{{ client.email }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- No results message -->
+          <div class="recent-users-dropdown-list no-results" *ngIf="isRecentUsersDropdownOpen && filteredRecentUsers.length === 0 && recentUsersSearchTerm.trim()">
+            <div class="recent-users-dropdown-item disabled">
+              <div class="no-results-text">No clients found matching "{{ recentUsersSearchTerm }}"</div>
+            </div>
+          </div>
+          
+          <!-- Empty state -->
+          <div class="recent-users-dropdown-list no-results" *ngIf="isRecentUsersDropdownOpen && recentUsers.length === 0 && !recentUsersSearchTerm.trim()">
+            <div class="recent-users-dropdown-item disabled">
+              <div class="no-results-text">No clients. Search for clients to add them here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <nav class="nav">
+        <button class="nav-btn" [class.active]="activeTab === 'dashboard'" data-tab="dashboard" (click)="setActiveTab('dashboard')">Dashboard</button>
+        <button class="nav-btn" [class.active]="activeTab === 'portfolios'" data-tab="portfolios" (click)="setActiveTab('portfolios')">Portfolios</button>
+        <button class="nav-btn" [class.active]="activeTab === 'insights'" data-tab="insights" (click)="setActiveTab('insights')">AI Insights</button>
+        <button class="nav-btn" [class.active]="activeTab === 'settings'" data-tab="settings" (click)="setActiveTab('settings')">Settings</button>
+      </nav>
+      
+      <!-- User Menu -->
+      <div class="user-menu">
+        <div class="user-info">
+          <span class="user-name">{{ advisorName }}</span>
+          <span class="user-email">{{ advisorEmail }}</span>
+        </div>
+        <button class="logout-btn" (click)="logout()">
+          <span class="logout-icon">🚪</span>
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Dashboard Tab -->
+    <div *ngIf="activeTab === 'dashboard'" class="tab-content">
+      <div class="dashboard-grid">
+        <!-- Portfolio Overview Card -->
+        <div class="card portfolio-overview">
+          <h2>Portfolio Overview</h2>
+          
+          <!-- Portfolio Carousel Controls (only show if client has portfolios) -->
+          <div class="portfolio-carousel-controls" *ngIf="selectedClientId && portfolios.length > 1">
+            <div class="carousel-dots">
+              <button 
+                *ngFor="let portfolio of getVisiblePortfolios(); let i = index" 
+                class="carousel-dot" 
+                [class.active]="currentPortfolioIndex === i"
+                (click)="selectPortfolioByIndex(i)"
+                [title]="portfolio.name"
+              ></button>
+              <button 
+                *ngIf="hasMorePortfolios()" 
+                class="carousel-more-btn"
+                (click)="setActiveTab('portfolios')"
+                title="View all portfolios"
+              >
+                <span class="more-icon">→</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="portfolio-selection-info" *ngIf="selectedPortfolio; else noPortfolioSelected">
+            <div class="selected-portfolio-header">
+              <h3>{{ selectedPortfolio.name }}</h3>
+              <span class="portfolio-type">{{ selectedPortfolio.accountType || 'Standard' }}</span>
+              <span class="client-name" *ngIf="selectedClient">Client: {{ selectedClient.name }}</span>
+            </div>
+            <div class="portfolio-stats">
+              <div class="stat">
+                <span class="stat-label">Total Portfolio</span>
+                <span class="stat-value">${{ totalPortfolioValue | number:'1.0-0' }}</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Total Invested</span>
+                <span class="stat-value">${{ totalValue | number:'1.0-0' }}</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Cash</span>
+                <span class="stat-value" [class.positive]="cashAmount > 0" [class.negative]="cashAmount < 0">
+                  ${{ cashAmount | number:'1.0-0' }}
+                </span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Investment Rate</span>
+                <span class="stat-value">{{ (totalValue / totalPortfolioValue * 100) | number:'1.1-1' }}%</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Holdings</span>
+                <span class="stat-value">{{ holdingsCount }}</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Account Type</span>
+                <span class="stat-value">{{ selectedPortfolio.accountType || 'Standard' }}</span>
+              </div>
+            </div>
+          </div>
+          <ng-template #noPortfolioSelected>
+            <div class="no-portfolio-selected">
+              <p>No portfolio selected</p>
+              <p class="hint">Go to the Portfolios tab to select a client and portfolio</p>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Holdings & Sector Analysis Card -->
+        <div class="card holdings-analysis" *ngIf="selectedPortfolio && holdings.length > 0; else noHoldingsData">
+          <h2>Holdings & Sector Analysis</h2>
+          
+          <div class="analysis-content">
+            <!-- Top Holdings Section -->
+            <div class="holdings-section">
+              <h3>Holdings</h3>
+              <div class="scrollable-holdings">
+                <div *ngFor="let holding of holdings" class="holding-item">
+                  <div class="holding-info">
+                    <div class="holding-ticker">{{ holding.ticker }}</div>
+                    <div class="holding-name">{{ holding.sector || 'Unknown Sector' }}</div>
+                  </div>
+                  <div class="holding-details">
+                    <div class="holding-shares">{{ holding.shares }} shares</div>
+                    <div class="holding-value">${{ (holding.shares * holding.pricePerShare) | number:'1.0-0' }}</div>
+                    <div class="holding-percentage">{{ ((holding.shares * holding.pricePerShare) / totalValue * 100) | number:'1.1-1' }}%</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sector Analysis Section -->
+            <div class="sector-section">
+              <h3>Sectors</h3>
+              <div class="scrollable-sectors">
+                <div *ngFor="let sector of sectorAnalysis.sectors" class="sector-item">
+                  <div class="sector-info">
+                    <div class="sector-name">{{ sector.sector }}</div>
+                    <div class="sector-percentage">{{ sector.percentage | number:'1.1-1' }}%</div>
+                  </div>
+                  <div class="sector-bar">
+                    <div class="sector-fill" [style.width.%]="sector.percentage"></div>
+                  </div>
+                  <div class="sector-value">${{ sector.value | number:'1.0-0' }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+        <ng-template #noHoldingsData>
+          <div class="card holdings-analysis">
+            <h2>Holdings & Sector Analysis</h2>
+            <div class="no-holdings-message">
+              <p *ngIf="!selectedPortfolio">No portfolio selected</p>
+              <p *ngIf="selectedPortfolio && holdings.length === 0">No holdings found for this portfolio</p>
+              <p class="hint">Go to the Portfolios tab to add holdings or select a different portfolio</p>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Recent Insights Card -->
+        <div class="card recent-insights">
+          <div class="card-header">
+            <h2>Recent AI Insights</h2>
+            <button 
+              *ngIf="recentInsights.length > 3" 
+              class="btn btn-sm btn-secondary view-all-btn"
+              (click)="setActiveTab('insights')"
+            >
+              View All
+            </button>
+          </div>
+          <div class="insights-scroll-container" *ngIf="recentInsights.length > 0; else noInsights">
+            <div class="insights-list">
+              <div *ngFor="let insight of recentInsights" class="insight-item">
+                <div class="insight-header">
+                  <div class="insight-meta">
+                    <span class="insight-date">{{ formatInsightDate(insight.createdAt) }}</span>
+                    <span class="insight-portfolio" *ngIf="insight.portfolioName">{{ insight.portfolioName }}</span>
+                  </div>
+                  <button class="insight-view-btn" (click)="viewInsightFromDashboard(insight)" title="View Full Insight">
+                    <span class="view-icon">→</span>
+                  </button>
+                </div>
+                <h4 class="insight-title">{{ insight.summary }}</h4>
+                <p class="insight-text">{{ insight.aiGeneratedText | slice:0:100 }}...</p>
+              </div>
+            </div>
+          </div>
+          <ng-template #noInsights>
+            <p class="no-data">No insights generated yet. Click "Generate AI Insight" to get started!</p>
+          </ng-template>
+        </div>
+
+        <!-- Market News Card -->
+        <div class="card market-news">
+          <h2>Market News</h2>
+          <div class="news-horizontal-container" *ngIf="marketNews.length > 0; else noNews">
+            <div class="news-horizontal-list">
+              <div *ngFor="let news of marketNews" class="news-horizontal-item">
+                <div class="news-horizontal-header">
+                  <h4 class="news-headline">{{ news.headline }}</h4>
+                  <span class="news-time">{{ lastNewsUpdate | date:'shortTime' }}</span>
+                </div>
+                <p class="news-summary">{{ news.summary }}</p>
+                <a *ngIf="news.url" [href]="news.url" target="_blank" class="news-link">Read More →</a>
+              </div>
+            </div>
+          </div>
+          <ng-template #noNews>
+            <p class="no-data">Loading market news...</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolios Tab -->
+    <div *ngIf="activeTab === 'portfolios'" class="tab-content">
+      <div class="portfolios-header">
+        <h2>Client Portfolios</h2>
+        <button class="btn btn-primary" (click)="createPortfolio()">Create New Portfolio</button>
+      </div>
+      
+      <!-- Client Selection -->
+      <div class="client-selection">
+        <h3>Select Client</h3>
+        <div class="client-selector-container" *ngIf="clients.length > 0; else noClients">
+          <!-- Custom Search Dropdown -->
+          <div class="custom-dropdown-container">
+            <label for="clientSearchInput">Select Client:</label>
+            <div class="search-dropdown-wrapper">
+              <input 
+                type="text" 
+                id="clientSearchInput"
+                class="search-input" 
+                placeholder="Search for a client..."
+                [(ngModel)]="clientSearchTerm"
+                (input)="onClientSearch()"
+                (focus)="onClientSearchFocus()"
+                (blur)="onClientSearchBlur()"
+              >
+              <span class="search-icon">🔍</span>
+              
+              <!-- Dropdown List -->
+              <div class="dropdown-list" *ngIf="isClientDropdownOpen && filteredClients.length > 0">
+                <div 
+                  *ngFor="let client of filteredClients" 
+                  class="dropdown-item"
+                  (click)="selectClient(client)"
+                >
+                  <div class="client-name">{{ client.name }}</div>
+                  <div class="client-details">
+                    <span class="client-email">{{ client.email }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- No results message -->
+              <div class="dropdown-list no-results" *ngIf="isClientDropdownOpen && filteredClients.length === 0 && clientSearchTerm.trim()">
+                <div class="dropdown-item disabled">
+                  <div class="no-results-text">No clients found matching "{{ clientSearchTerm }}"</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Selected Client Info -->
+          <div class="selected-client-info" *ngIf="selectedClient">
+            <div class="client-info-card">
+              <h4>{{ selectedClient.name }}</h4>
+              <p class="client-email">{{ selectedClient.email }}</p>
+              <div class="client-tags">
+                <span class="tag risk-tag">Risk: {{ selectedClient.riskTolerance }}</span>
+                <span class="tag goal-tag">{{ selectedClient.investmentGoals }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noClients>
+          <div class="empty-state">
+            <p>No clients found. Please check your client data.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Portfolio Selection (only show if client is selected) -->
+      <div class="portfolio-selection" *ngIf="selectedClientId && portfolios.length > 0">
+        <h3>{{ selectedClient?.name }}'s Portfolios</h3>
+        <div class="portfolio-grid">
+          <div 
+            *ngFor="let portfolio of portfolios" 
+            class="portfolio-card"
+            [class.selected]="selectedPortfolioId === portfolio.id.toString()"
+            (click)="viewPortfolio(portfolio.id)"
+          >
+            <div class="portfolio-header">
+              <h4>{{ portfolio.name }}</h4>
+              <span class="portfolio-type">{{ portfolio.accountType || 'Standard' }}</span>
+            </div>
+            <div class="portfolio-value">
+              <span class="value-label">Total Value</span>
+              <span class="value-amount">${{ portfolio.totalValue | number:'1.0-0' }}</span>
+            </div>
+            <div class="portfolio-actions">
+              <button class="btn btn-sm btn-primary" (click)="viewPortfolio(portfolio.id); $event.stopPropagation()">View Details</button>
+              <button class="btn btn-sm btn-secondary" (click)="generatePortfolioInsight(portfolio.id); $event.stopPropagation()">AI Analysis</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No portfolios message -->
+      <div class="no-portfolios" *ngIf="selectedClientId && portfolios.length === 0 && !isLoading">
+        <div class="empty-state">
+          <p>{{ selectedClient?.name }} has no portfolios yet. Create one to get started!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Insights Tab -->
+    <div *ngIf="activeTab === 'insights'" class="tab-content">
+      <div class="insights-header">
+        <h2>AI Investment Insights</h2>
+        
+        <!-- Client Selection Required Message -->
+        <div class="client-selection-required" *ngIf="!selectedClientId">
+          <div class="empty-state">
+            <p>Please select a client first to generate AI insights.</p>
+            <p class="hint">Use the client selector in the header or go to the Portfolios tab to search for a client.</p>
+          </div>
+        </div>
+        
+        <!-- Insight Controls (only show if client is selected) -->
+        <div class="insight-controls" *ngIf="selectedClientId">
+          <select class="form-select" [(ngModel)]="selectedPortfolioId">
+            <option value="">Select Portfolio</option>
+            <option *ngFor="let portfolio of portfolios" [value]="portfolio.id">
+              {{ portfolio.name }}
+            </option>
+          </select>
+          <input 
+            type="text" 
+            class="form-input" 
+            placeholder="Analysis preferences..."
+            [(ngModel)]="analysisPreferences"
+          >
+          <button 
+            class="btn btn-primary" 
+            (click)="generateInsight()" 
+            [disabled]="!selectedPortfolioId || isGeneratingInsight"
+          >
+            <span *ngIf="isGeneratingInsight">Generating...</span>
+            <span *ngIf="!isGeneratingInsight">Generate Insight</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Current Insight Display -->
+      <div class="insight-result" *ngIf="selectedClientId && currentInsight">
+        <!-- Insight Summary Card -->
+        <div class="insight-summary-card">
+          <div class="summary-header">
+            <h3>Portfolio Analysis Summary 
+              <span class="portfolio-name" *ngIf="currentInsight?.portfolioName">- {{ currentInsight.portfolioName }}</span>
+              <span class="portfolio-name" *ngIf="!currentInsight?.portfolioName && selectedPortfolio">- {{ selectedPortfolio.name }}</span>
+            </h3>
+            <div class="header-controls">
+              <span class="insight-date">{{ formatInsightDate(currentInsight.createdAt) }}</span>
+              <button class="close-insight-btn" (click)="closeInsight()" title="Close Insight">
+                <span class="close-icon">×</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="summary-metrics" *ngIf="currentInsight?.riskScore !== undefined || currentInsight?.diversificationScore !== undefined || currentInsight?.goalAlignment !== undefined">
+            <div class="metric-item">
+              <span class="metric-label">Risk Score</span>
+              <div class="metric-value">
+                <span class="score">{{ currentInsight.riskScore }}/10</span>
+                <div class="risk-bar">
+                  <div class="risk-fill" [style.width.%]="(currentInsight.riskScore || 0) * 10"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="metric-item">
+              <span class="metric-label">Diversification</span>
+              <div class="metric-value">
+                <span class="score">{{ currentInsight.diversificationScore }}%</span>
+                <div class="diversification-bar">
+                  <div class="diversification-fill" [style.width.%]="currentInsight.diversificationScore || 0"></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="metric-item">
+              <span class="metric-label">Goal Alignment</span>
+              <div class="metric-value">
+                <span class="score">{{ currentInsight.goalAlignment }}%</span>
+                <div class="alignment-bar">
+                  <div class="alignment-fill" [style.width.%]="currentInsight.goalAlignment || 0"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Score Adjustments -->
+          <div class="ai-adjustments" *ngIf="getAIAdjustments().length > 0">
+            <h4>AI Score Adjustments</h4>
+            <div class="adjustments-list">
+              <div 
+                *ngFor="let adj of getAIAdjustments()" 
+                class="adjustment-item"
+              >
+                <div class="adjustment-header">
+                  <span class="adjustment-type">{{ adj.type }}</span>
+                  <span class="adjustment-value" 
+                        [class.positive]="adj.adjustment.startsWith('+')" 
+                        [class.negative]="adj.adjustment.startsWith('-')"
+                        [class.neutral]="adj.adjustment === '0' || adj.adjustment === '0%'">
+                    {{ adj.adjustment }}
+                  </span>
+                </div>
+                <div class="adjustment-reasoning">
+                  {{ adj.reasoning }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <!-- Debug Information -->
+          <div class="debug-section" *ngIf="getDebugInfo()">
+            <h4>Debug Information</h4>
+            <div class="debug-content">
+              <button class="debug-toggle" (click)="showDebugInfo = !showDebugInfo">
+                {{ showDebugInfo ? 'Hide' : 'Show' }} Debug Info
+              </button>
+              <div class="debug-text" *ngIf="showDebugInfo">
+                <pre>{{ formatDebugInfo() }}</pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Recommendations -->
+          <div class="main-recommendations" *ngIf="currentInsight.structuredInsight?.mainRecommendations?.length">
+            <h4>Key Recommendations</h4>
+            <div class="recommendations-list">
+              <div 
+                *ngFor="let rec of currentInsight.structuredInsight?.mainRecommendations || []" 
+                class="recommendation-item"
+              >
+                <span class="rec-icon">💡</span>
+                <span class="rec-text">{{ rec }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Structured Sections -->
+        <div class="insight-sections" *ngIf="currentInsight?.structuredInsight?.sections">
+          <h3>Detailed Analysis</h3>
+          
+          <!-- Section Navigation Tabs -->
+          <div class="section-tabs">
+            <div class="tab-nav">
+              <button 
+                *ngFor="let section of getInsightSections()" 
+                class="tab-button" 
+                [class.active]="activeSectionTab === section.key"
+                (click)="setActiveSectionTab(section.key)"
+              >
+                <span class="tab-title">{{ section.title }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Section Content -->
+          <div class="section-content">
+            <div 
+              *ngFor="let section of getInsightSections()" 
+              class="section-panel" 
+              [class.active]="activeSectionTab === section.key"
+            >
+              <!-- Section Header -->
+              <div class="section-header">
+                <h4>{{ section.title }}</h4>
+              </div>
+
+              <!-- AI Analysis & Insights Section -->
+              <div class="ai-analysis-section" *ngIf="getSectionSpecificAnalysis(section.key)">
+                <h5>AI Analysis & Insights</h5>
+                <div class="ai-content">
+                  <div class="ai-summary">
+                    <strong>Summary:</strong> {{ currentInsight.summary }}
+                  </div>
+                  <div class="ai-full-text" [innerHTML]="formatAIResponse(getSectionSpecificAnalysis(section.key))"></div>
+                </div>
+              </div>
+
+              <!-- Section Content -->
+              <div class="section-body">
+                <div class="content-text">
+                  <p>{{ section.content }}</p>
+                </div>
+
+
+
+                <!-- Key Metrics Dashboard -->
+                <div class="metrics-dashboard" *ngIf="section.keyMetrics?.length">
+                  <h5>Key Metrics</h5>
+                  <div class="metrics-grid">
+                    <div *ngFor="let metric of section.keyMetrics" class="metric-card">
+                      <div class="metric-icon">📊</div>
+                      <div class="metric-value">{{ metric }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Items -->
+                <div class="action-items" *ngIf="extractActionItems(section.content)?.length">
+                  <h5>Action Items</h5>
+                  <div class="action-list">
+                    <div *ngFor="let action of extractActionItems(section.content)" class="action-item">
+                      <span class="action-icon">⚡</span>
+                      <span class="action-text">{{ action }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Asset Recommendations (Standalone Section) -->
+        <div class="standalone-asset-recommendations" *ngIf="currentInsight && getAssetRecommendations().length > 0">
+          <div class="recommendations-header">
+            <h3>🎯 Asset Recommendations</h3>
+            <p class="recommendations-subtitle">AI-generated suggestions to improve your portfolio</p>
+          </div>
+          
+          <div class="recommendations-grid">
+            <div *ngFor="let rec of getAssetRecommendations()" class="recommendation-card">
+              <div class="rec-header">
+                <div class="rec-ticker">{{ rec.ticker }}</div>
+                <div class="rec-name">{{ rec.assetName }}</div>
+                <div class="rec-priority" [class]="'priority-' + rec.priority?.toLowerCase()">
+                  {{ rec.priority }}
+                </div>
+              </div>
+              <div class="rec-details">
+                <div class="rec-allocation">
+                  <strong>Allocation:</strong> {{ rec.allocation }}
+                </div>
+                <div class="rec-category">
+                  <strong>Category:</strong> {{ rec.category }}
+                </div>
+                <div class="rec-reasoning">
+                  <strong>Reasoning:</strong> {{ rec.reasoning }}
+                </div>
+                                      <div class="rec-impact">
+                        <strong>Expected Impact:</strong> {{ rec.expectedImpact }}
+                      </div>
+                      <div class="rec-validation" *ngIf="getPriorityValidationMessage(rec)">
+                        <span class="validation-icon">💡</span>
+                        <span class="validation-text">{{ getPriorityValidationMessage(rec) }}</span>
+                      </div>
+                    </div>
+                  </div>
+          </div>
+        </div>
+
+        <!-- Raw Response (Collapsible) -->
+        <div class="raw-response-section">
+          <details>
+            <summary>View Raw AI Response</summary>
+            <div class="raw-response-content">
+              <pre>{{ currentInsight.aiGeneratedText }}</pre>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Recent Insights -->
+      <div class="recent-insights" *ngIf="selectedClientId && recentInsights.length > 0">
+        <h3>Recent Insights</h3>
+        <div class="insights-list">
+          <div 
+            *ngFor="let insight of recentInsights" 
+            class="recent-insight-item"
+            [class.selected]="currentInsight?.id === insight.id"
+            (click)="viewInsight(insight)"
+          >
+            <div class="insight-meta">
+              <span class="insight-date">{{ formatInsightDate(insight.createdAt) }}</span>
+              <div class="insight-title-section">
+                <span class="insight-summary">{{ insight.summary }}</span>
+                <span class="portfolio-name" *ngIf="insight.portfolioName">• {{ insight.portfolioName }}</span>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-secondary">View</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div *ngIf="activeTab === 'settings'" class="tab-content">
+      <div class="settings-header">
+        <h2>Settings</h2>
+      </div>
+      
+      <div class="settings-grid">
+        <div class="card">
+          <h3>API Configuration</h3>
+          <div class="setting-item">
+            <label>Backend URL:</label>
+            <input type="text" class="form-input" value="http://localhost:8080" readonly>
+          </div>
+          <div class="setting-item">
+            <label>AI Service URL:</label>
+            <input type="text" class="form-input" value="http://localhost:8000" readonly>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Data Management</h3>
+          <div class="setting-actions">
+            <button class="btn btn-secondary" (click)="refreshData()">Refresh Data</button>
+            <button class="btn btn-danger" (click)="clearData()">Clear All Data</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading...</p>
+    </div>
+  </div>
+</div> 

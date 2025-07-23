@@ -1,0 +1,370 @@
+<div class="portfolio-detail-container">
+  <!-- Header -->
+  <header class="portfolio-header">
+    <div class="header-content">
+      <button class="btn btn-secondary back-btn" (click)="goBack()">
+        ← Back to Portfolios
+      </button>
+      <div class="portfolio-title" *ngIf="portfolio">
+        <h1>{{ portfolio.name }}</h1>
+        <div class="portfolio-meta">
+          <span class="account-type">{{ portfolio.accountType || 'Standard' }}</span>
+          <span class="client-name" *ngIf="portfolio.client">Client: {{ portfolio.client.name }}</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" (click)="generateInsight()">AI Analysis</button>
+        <button class="btn btn-secondary" (click)="addHolding()">Add Holding</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading portfolio details...</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="portfolio-content" *ngIf="!isLoading && portfolio">
+    <!-- Navigation Tabs -->
+    <nav class="portfolio-nav">
+      <button 
+        class="nav-tab" 
+        [class.active]="activeSection === 'overview'"
+        (click)="setActiveSection('overview')"
+      >
+        Overview
+      </button>
+      <button 
+        class="nav-tab" 
+        [class.active]="activeSection === 'holdings'"
+        (click)="setActiveSection('holdings')"
+      >
+        Holdings ({{ holdingsCount }})
+      </button>
+      <button 
+        class="nav-tab" 
+        [class.active]="activeSection === 'sectors'"
+        (click)="setActiveSection('sectors')"
+      >
+        Sector Breakdown
+      </button>
+      <button 
+        class="nav-tab" 
+        [class.active]="activeSection === 'allocation'"
+        (click)="setActiveSection('allocation')"
+      >
+        Asset Allocation
+      </button>
+      <button 
+        class="nav-tab" 
+        [class.active]="activeSection === 'insights'"
+        (click)="setActiveSection('insights')"
+      >
+        AI Insights
+      </button>
+    </nav>
+
+    <!-- Overview Section -->
+    <div *ngIf="activeSection === 'overview'" class="section-content">
+      <div class="overview-grid">
+        <!-- Portfolio Summary Card -->
+        <div class="card portfolio-summary">
+          <h2>Portfolio Summary</h2>
+          <div class="summary-stats">
+            <div class="stat-item">
+              <span class="stat-label">Total Portfolio Value</span>
+              <span class="stat-value">${{ totalPortfolioValue | number:'1.0-0' }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Total Invested</span>
+              <span class="stat-value">${{ totalValue | number:'1.0-0' }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Cash</span>
+              <span class="stat-value" [class.positive]="cashAmount > 0" [class.negative]="cashAmount < 0">
+                ${{ cashAmount | number:'1.0-0' }}
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Investment Rate</span>
+              <span class="stat-value">{{ (totalValue / totalPortfolioValue * 100) | number:'1.1-1' }}%</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Number of Holdings</span>
+              <span class="stat-value">{{ holdingsCount }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Average Beta</span>
+              <span class="stat-value">{{ averageBeta | number:'1.2-2' }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Dividend Yield</span>
+              <span class="stat-value">{{ totalDividendYield | number:'1.2-2' }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Holdings Card -->
+        <div class="card top-holdings">
+          <h2>Top Holdings</h2>
+          <div class="holdings-list" *ngIf="holdings.length > 0; else noHoldings">
+            <div 
+              *ngFor="let holding of holdings.slice(0, 5)" 
+              class="holding-item"
+            >
+              <div class="holding-info">
+                <span class="ticker">{{ holding.ticker }}</span>
+                <span class="shares">{{ holding.shares | number }} shares</span>
+              </div>
+              <div class="holding-value">
+                <span class="value">${{ getHoldingValue(holding) | number:'1.0-0' }}</span>
+                <span class="weight">({{ getHoldingWeight(holding) | number:'1.1-1' }}%)</span>
+              </div>
+            </div>
+          </div>
+          <ng-template #noHoldings>
+            <p class="no-data">No holdings found</p>
+          </ng-template>
+        </div>
+
+        <!-- Sector Overview Card -->
+        <div class="card sector-overview">
+          <h2>Sector Overview</h2>
+          <div class="sector-list" *ngIf="sectorBreakdown.length > 0; else noSectors">
+            <div 
+              *ngFor="let sector of sectorBreakdown.slice(0, 5)" 
+              class="sector-item"
+            >
+              <span class="sector-name">{{ sector.sector }}</span>
+              <span class="sector-percentage">{{ sector.percentage | number:'1.1-1' }}%</span>
+            </div>
+          </div>
+          <ng-template #noSectors>
+            <p class="no-data">No sector data available</p>
+          </ng-template>
+        </div>
+
+        <!-- Asset Type Overview Card -->
+        <div class="card asset-overview">
+          <h2>Asset Type Overview</h2>
+          <div class="asset-list" *ngIf="assetTypeBreakdown.length > 0; else noAssets">
+            <div 
+              *ngFor="let asset of assetTypeBreakdown.slice(0, 5)" 
+              class="asset-item"
+            >
+              <span class="asset-name">{{ asset.assetType }}</span>
+              <span class="asset-percentage">{{ asset.percentage | number:'1.1-1' }}%</span>
+            </div>
+          </div>
+          <ng-template #noAssets>
+            <p class="no-data">No asset type data available</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Holdings Section -->
+    <div *ngIf="activeSection === 'holdings'" class="section-content">
+      <div class="holdings-header">
+        <h2>Portfolio Holdings</h2>
+        <div class="holdings-summary">
+          <span>{{ holdingsCount }} holdings • ${{ totalValue | number:'1.0-0' }} invested value</span>
+        </div>
+      </div>
+
+      <div class="holdings-table-container" *ngIf="!isLoadingHoldings">
+        <table class="holdings-table" *ngIf="holdings.length > 0; else noHoldingsTable">
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th>Shares</th>
+              <th>Price</th>
+              <th>Value</th>
+              <th>Weight</th>
+              <th>Sector</th>
+              <th>Asset Type</th>
+              <th>Beta</th>
+              <th>Dividend Yield</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let holding of holdings">
+              <td class="ticker-cell">{{ holding.ticker }}</td>
+              <td>{{ holding.shares | number }}</td>
+              <td>${{ holding.pricePerShare | number:'1.2-2' }}</td>
+              <td class="value-cell">${{ getHoldingValue(holding) | number:'1.0-0' }}</td>
+              <td class="weight-cell">{{ getHoldingWeight(holding) | number:'1.1-1' }}%</td>
+              <td>{{ holding.sector }}</td>
+              <td>{{ holding.assetType }}</td>
+              <td>{{ holding.beta | number:'1.2-2' }}</td>
+              <td>{{ holding.dividendYield | number:'1.2-2' }}%</td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #noHoldingsTable>
+          <div class="empty-state">
+            <p>No holdings found in this portfolio</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="loading-overlay" *ngIf="isLoadingHoldings">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Loading holdings...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sector Breakdown Section -->
+    <div *ngIf="activeSection === 'sectors'" class="section-content">
+      <div class="sectors-header">
+        <h2>Sector Breakdown</h2>
+        <p>Portfolio allocation by sector</p>
+      </div>
+
+      <div class="sectors-grid">
+        <div 
+          *ngFor="let sector of sectorBreakdown" 
+          class="sector-card"
+        >
+          <div class="sector-header">
+            <h3>{{ sector.sector }}</h3>
+            <span class="sector-percentage">{{ sector.percentage | number:'1.1-1' }}%</span>
+          </div>
+          <div class="sector-value">${{ sector.value | number:'1.0-0' }}</div>
+          <div class="sector-bar">
+            <div class="bar-fill" [style.width.%]="sector.percentage"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="sectorBreakdown.length === 0">
+        <p>No sector data available</p>
+      </div>
+    </div>
+
+    <!-- Asset Allocation Section -->
+    <div *ngIf="activeSection === 'allocation'" class="section-content">
+      <div class="allocation-header">
+        <h2>Asset Allocation</h2>
+        <p>Portfolio allocation by asset type</p>
+      </div>
+
+      <div class="allocation-grid">
+        <div 
+          *ngFor="let asset of assetTypeBreakdown" 
+          class="allocation-card"
+        >
+          <div class="allocation-header">
+            <h3>{{ asset.assetType }}</h3>
+            <span class="allocation-percentage">{{ asset.percentage | number:'1.1-1' }}%</span>
+          </div>
+          <div class="allocation-value">${{ asset.value | number:'1.0-0' }}</div>
+          <div class="allocation-bar">
+            <div class="bar-fill" [style.width.%]="asset.percentage"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="assetTypeBreakdown.length === 0">
+        <p>No asset allocation data available</p>
+      </div>
+    </div>
+
+    <!-- Insights Section -->
+    <div *ngIf="activeSection === 'insights'" class="section-content">
+      <div class="insights-header">
+        <h2>AI Portfolio Analysis</h2>
+        <div class="insights-controls">
+          <textarea 
+            [(ngModel)]="analysisPreferences" 
+            placeholder="Enter analysis preferences (optional)"
+            class="preferences-input"
+            rows="3"
+          ></textarea>
+          <button 
+            class="btn btn-primary generate-btn" 
+            (click)="generateInsight()"
+            [disabled]="isGeneratingInsight"
+          >
+            <span *ngIf="!isGeneratingInsight">Generate New Analysis</span>
+            <span *ngIf="isGeneratingInsight">Generating...</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-overlay" *ngIf="isGeneratingInsight">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Generating AI analysis...</p>
+        </div>
+      </div>
+
+      <!-- Recent Insights List -->
+      <div class="recent-insights" *ngIf="!isGeneratingInsight">
+        <h3>Recent Analyses</h3>
+        <div class="insights-list" *ngIf="recentInsights.length > 0; else noInsights">
+          <div 
+            *ngFor="let insight of recentInsights" 
+            class="insight-item"
+            [class.selected]="currentInsight?.id === insight.id"
+            (click)="viewInsight(insight)"
+          >
+            <div class="insight-header">
+              <span class="insight-date">{{ formatInsightDate(insight.createdAt) }}</span>
+              <div class="insight-scores" *ngIf="insight.riskScore !== undefined || insight.diversificationScore !== undefined || insight.goalAlignment !== undefined">
+                <span class="score risk">Risk: {{ insight.riskScore | number:'1.0-1' }}/10</span>
+                <span class="score diversification">Diversification: {{ insight.diversificationScore | number:'1.0-1' }}/100</span>
+                <span class="score alignment">Alignment: {{ insight.goalAlignment | number:'1.0-1' }}/100</span>
+              </div>
+            </div>
+            <div class="insight-summary-section">
+              <div class="insight-summary">{{ insight.summary }}</div>
+              <div class="portfolio-name" *ngIf="insight.portfolioName">{{ insight.portfolioName }}</div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noInsights>
+          <div class="empty-state">
+            <p>No analyses generated yet. Click "Generate New Analysis" to get started.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Current Insight Display -->
+      <div class="current-insight" *ngIf="currentInsight && !isGeneratingInsight">
+        <div class="insight-overview">
+          <h3>Analysis Results</h3>
+          <div class="insight-metrics" *ngIf="currentInsight.riskScore !== undefined || currentInsight.diversificationScore !== undefined || currentInsight.goalAlignment !== undefined">
+            <div class="metric">
+              <span class="metric-label">Risk Score</span>
+              <span class="metric-value">{{ currentInsight.riskScore | number:'1.0-1' }}/10</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Diversification Score</span>
+              <span class="metric-value">{{ currentInsight.diversificationScore | number:'1.0-1' }}/100</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Goal Alignment</span>
+              <span class="metric-value">{{ currentInsight.goalAlignment | number:'1.0-1' }}/100</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-sections">
+          <app-insight-section 
+            *ngFor="let section of getInsightSections()"
+            [section]="section"
+            [sectionKey]="section.key"
+          ></app-insight-section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div> 

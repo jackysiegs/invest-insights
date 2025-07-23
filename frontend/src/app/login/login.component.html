@@ -1,0 +1,94 @@
+<div class="login-container">
+  <div class="login-card">
+    <!-- Logo and Header -->
+    <div class="login-header">
+      <div class="logo">
+        <h1>💰 Invest Insights</h1>
+        <p>Advisor Portal</p>
+      </div>
+    </div>
+
+    <!-- Login Form -->
+    <form class="login-form" (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="Enter your username"
+            required
+            [class.error]="errorMessage && !username"
+            (keypress)="onKeyPress($event)"
+          >
+          <span class="input-icon">👤</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Enter your password"
+            required
+            [class.error]="errorMessage && !password"
+            (keypress)="onKeyPress($event)"
+          >
+          <span class="input-icon">🔒</span>
+          <button 
+            type="button" 
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div class="error-message" *ngIf="errorMessage">
+        <span class="error-icon">⚠️</span>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Login Button -->
+      <button 
+        type="submit" 
+        class="login-btn"
+        [disabled]="isLoading || !username || !password"
+      >
+        <span class="btn-content" *ngIf="!isLoading">
+          <span class="btn-icon">🚀</span>
+          Sign In
+        </span>
+        <span class="btn-content" *ngIf="isLoading">
+          <div class="spinner"></div>
+          Signing In...
+        </span>
+      </button>
+    </form>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>Secure access to your investment management platform</p>
+      <div class="security-badges">
+        <span class="badge">🔒 SSL Encrypted</span>
+        <span class="badge">🛡️ Secure</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background Decoration -->
+  <div class="background-decoration">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+  </div>
+</div> 

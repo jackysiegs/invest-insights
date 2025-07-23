@@ -1,0 +1,36 @@
+<div class="insight-section-card">
+  <div class="section-header" (click)="toggleExpanded()">
+    <div class="section-title">
+      <span class="risk-icon" [style.color]="getRiskLevelColor()">{{ getRiskLevelIcon() }}</span>
+      <h3>{{ section.title }}</h3>
+    </div>
+    <div class="section-controls">
+      <span class="risk-level" [style.color]="getRiskLevelColor()">
+        {{ section.riskLevel | titlecase }} Risk
+      </span>
+      <button class="expand-btn" [class.expanded]="isExpanded">
+        {{ isExpanded ? '−' : '+' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="section-content" *ngIf="isExpanded">
+    <!-- Key Metrics -->
+    <div class="key-metrics" *ngIf="section.keyMetrics.length > 0">
+      <h4>Key Metrics</h4>
+      <div class="metrics-grid">
+        <span 
+          *ngFor="let metric of section.keyMetrics" 
+          class="metric-tag"
+        >
+          {{ metric }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-text">
+      <div [innerHTML]="formatContent(section.content)"></div>
+    </div>
+  </div>
+</div> 
