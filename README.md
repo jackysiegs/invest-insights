@@ -35,7 +35,7 @@ A comprehensive financial portfolio analysis application that combines mathemati
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/rj-invest-insights.git
+git clone https://github.com/jackysiegs/rj-invest-insights.git
 cd rj-invest-insights
 ```
 
