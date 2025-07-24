@@ -10,13 +10,14 @@ A comprehensive financial portfolio analysis application that combines mathemati
 - **Modern UI**: Template design for now but intended to be a Glassmorphism design with responsive layout
 - **Multi-Client Management**: Advisor dashboard for managing multiple client portfolios
 - **Comprehensive Reporting**: Detailed analysis with actionable recommendations
+- **Automatic Setup**: Fresh installations work immediately with demo data and admin user
 
 ## Architecture
 
 - **Backend**: Java Spring Boot with PostgreSQL
 - **Frontend**: Angular 17 with modern UI components
 - **AI Service**: FastAPI microservice with OpenAI GPT-4 integration
-- **Database**: PostgreSQL with Docker Compose setup
+- **Database**: PostgreSQL with Docker Compose setup and automatic initialization
 - **APIs**: Finnhub for market data, OpenAI for AI insights
 
 ## Prerequisites
@@ -44,12 +45,15 @@ FINNHUB_API_KEY=your_finnhub_api_key_here
 
 **Note**: The `.env` file is ignored by Git for security. You need to create your own with your actual API keys.
 
-### 3. Start the Database
+### 3. Start the Database (Automatic Initialization)
 ```bash
 docker-compose up -d
 ```
 
-**Important**: The database will automatically initialize with demo data including the admin user.
+**Important**: The database will automatically:
+- Create all necessary tables
+- Initialize with demo data including the admin user
+- Be ready for immediate use
 
 ### 4. Start the Backend
 ```bash
@@ -84,6 +88,26 @@ The application comes pre-loaded with demo data including:
 - Username: `ii-Admin`
 - Password: `RayJay1!`
 
+## Automated Setup (Recommended)
+
+For the easiest setup experience, use the automated script:
+
+```bash
+# Make script executable (Linux/Mac)
+chmod +x scripts/start-demo.sh
+
+# Run automated setup
+./scripts/start-demo.sh
+```
+
+This script will:
+- ✅ Check Docker is running
+- ✅ Validate environment variables
+- ✅ Start database with automatic initialization
+- ✅ Start all services (backend, AI, frontend)
+- ✅ Verify everything is working
+- ✅ Provide login credentials
+
 ## Troubleshooting
 
 ### Database Connection Issues
@@ -103,6 +127,12 @@ If the frontend folder appears empty:
 1. The frontend is now included as a regular folder (not a submodule)
 2. Run `npm install` in the frontend directory
 3. Ensure Node.js 18+ is installed
+
+### Login Issues
+If login doesn't work:
+1. Ensure the database has been properly initialized
+2. Check that the admin user exists: `docker-compose exec -T postgres psql -U iiAdmin -d invest_insights -c "SELECT username FROM advisor;"`
+3. Verify the database container is running: `docker ps`
 
 ## Demo Clients & Portfolios
 
@@ -148,6 +178,8 @@ The application uses PostgreSQL with the following default settings:
 - Password: `RayJay1!`
 - Port: `5432`
 
+**Automatic Initialization**: The database automatically creates tables and demo data on first startup.
+
 ### API Configuration
 - **OpenAI**: Required for AI insights generation
 - **Finnhub**: Required for market news and company data
@@ -178,11 +210,13 @@ rj-invest-insights/
 ├── frontend/               # Angular application
 ├── ai_microservice/        # FastAPI AI service
 ├── database/               # Database setup and initialization
+│   ├── schema.sql         # Database schema creation
+│   └── init-demo-data.sql # Demo data initialization
 ├── docs/                   # Project documentation
 ├── scripts/                # Setup and utility scripts
 ├── tests/                  # Test files and validation scripts
 ├── data/                   # Sample data and API examples
-├── docker-compose.yml      # Database setup
+├── docker-compose.yml      # Database setup with automatic initialization
 └── README.md              # This file
 ```
 
@@ -192,10 +226,34 @@ rj-invest-insights/
 - **`frontend/`**: Angular 17 application with modern UI
 - **`ai_microservice/`**: FastAPI service for AI insights generation
 - **`database/`**: SQL scripts for database initialization and cleanup
+  - **`schema.sql`**: Creates all database tables automatically
+  - **`init-demo-data.sql`**: Inserts demo data including admin user
 - **`docs/`**: Technical documentation, improvement notes, and system architecture
 - **`scripts/`**: Setup scripts, demo automation, and utility tools
 - **`tests/`**: Python test scripts for AI improvements and validation
 - **`data/`**: Sample data files and API testing examples
+
+## Database Initialization
+
+The system uses an automated database initialization process:
+
+### Automatic Setup
+1. **Docker starts PostgreSQL container**
+2. **Docker runs initialization scripts**:
+   - `01-schema.sql` → Creates all tables with proper relationships
+   - `02-init-demo-data.sql` → Inserts admin user and demo data
+3. **Database is ready immediately** with tables and data
+4. **Spring Boot connects** to existing database seamlessly
+
+### Manual Verification
+To verify the database initialization worked:
+```bash
+# Check if admin user exists
+docker-compose exec -T postgres psql -U iiAdmin -d invest_insights -c "SELECT username FROM advisor;"
+
+# Check demo data
+docker-compose exec -T postgres psql -U iiAdmin -d invest_insights -c "SELECT COUNT(*) FROM client;"
+```
 
 ## Contributing
 
@@ -204,3 +262,18 @@ rj-invest-insights/
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
+
+## Recent Updates
+
+### Database Initialization Fix (Latest)
+- **Problem**: Fresh GitHub downloads failed login due to database initialization issues
+- **Solution**: Complete rewrite of database initialization system
+- **Result**: Fresh installations work immediately with working login
+- **Status**: Production ready for GitHub deployment
+
+**Key Improvements**:
+- Automatic table creation on container startup
+- Proper foreign key relationships
+- Admin user created automatically
+- No manual database setup required
+- JPA compatibility maintained

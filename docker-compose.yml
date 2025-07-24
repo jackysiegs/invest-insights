@@ -12,7 +12,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/init-demo-data.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/init-demo-data.sql:/docker-entrypoint-initdb.d/02-init-demo-data.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U iiAdmin -d invest_insights"]
       interval: 10s
