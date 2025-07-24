@@ -74,7 +74,7 @@ mvnw.cmd spring-boot:run
 ```bash
 cd ai_microservice
 pip install -r requirements.txt
-python main.py
+uvicorn main:app --reload
 ```
 
 ### 6. Start the Frontend
