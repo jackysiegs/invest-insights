@@ -1,4 +1,4 @@
-#Invest Insights
+# Invest Insights
 <img width="1675" height="1264" alt="Screenshot 2025-07-24 141547" src="https://github.com/user-attachments/assets/4f32a1f3-e57c-471e-b4b3-9f9f97a4872d" />
 <img width="1669" height="1267" alt="Screenshot 2025-07-24 141602" src="https://github.com/user-attachments/assets/1cedad51-4221-4462-8282-c26910e728c5" />
 <img width="1668" height="1267" alt="Screenshot 2025-07-24 141615" src="https://github.com/user-attachments/assets/b88c3950-fd4c-4aa9-ad7e-572d391d4106" />
