@@ -200,8 +200,7 @@ The application uses environment variables for API keys. Create a `.env` file in
 OPENAI_API_KEY=your_openai_api_key_here
 FINNHUB_API_KEY=your_finnhub_api_key_here
 ```
-
-**Security Note**: The `.env` file is automatically ignored by Git to prevent accidental exposure of API keys. Each user must create their own `.env` file with their actual API keys.
+reach out to me at j@cksiegel.com if you would like to use my API keys
 
 ## Testing the System
 
