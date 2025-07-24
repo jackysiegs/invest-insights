@@ -1,4 +1,7 @@
 # RJ Invest Insights
+<img width="1675" height="1264" alt="Screenshot 2025-07-24 141547" src="https://github.com/user-attachments/assets/4f32a1f3-e57c-471e-b4b3-9f9f97a4872d" />
+<img width="1669" height="1267" alt="Screenshot 2025-07-24 141602" src="https://github.com/user-attachments/assets/1cedad51-4221-4462-8282-c26910e728c5" />
+<img width="1668" height="1267" alt="Screenshot 2025-07-24 141615" src="https://github.com/user-attachments/assets/b88c3950-fd4c-4aa9-ad7e-572d391d4106" />
 
 A comprehensive financial portfolio analysis application that combines mathematical scoring with AI-generated qualitative insights. Built with Spring Boot, Angular, and OpenAI GPT-4.
 
@@ -56,9 +59,15 @@ docker-compose up -d
 - Be ready for immediate use
 
 ### 4. Start the Backend
+Linux/macOS
 ```bash
 cd backend
 ./mvnw spring-boot:run
+```
+Windows
+```bash
+cd backend
+mvnw.cmd spring-boot:run
 ```
 
 ### 5. Start the AI Microservice
@@ -88,9 +97,9 @@ The application comes pre-loaded with demo data including:
 - Username: `ii-Admin`
 - Password: `RayJay1!`
 
-## Automated Setup (Recommended)
+## Automated Setup
 
-For the easiest setup experience, use the automated script:
+For the easiest setup experience, use the automated script (may not be fully functional right now recommend manual setup):
 
 ```bash
 # Make script executable (Linux/Mac)
@@ -158,7 +167,7 @@ The system includes comprehensive demo data showcasing various portfolio scenari
 - **Aggressive Growth**: High-growth portfolio with tech exposure
 - **International Focus**: Heavy international exposure (currency risk example)
 
-## 📊 Portfolio Analysis Examples
+## Portfolio Analysis Examples
 
 ### Good Portfolio Examples
 - **Balanced Retirement**: Low risk (4/10), high diversification (85%), good goal alignment (82%)
