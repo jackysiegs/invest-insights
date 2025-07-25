@@ -5,6 +5,8 @@
 
 A comprehensive financial portfolio analysis application that combines mathematical scoring with AI-generated qualitative insights. Built with Spring Boot, Angular, and OpenAI GPT-4.
 
+In future development I plan to train and implement my own investment insight model much like that of the CNN model I built for my ML Geolocation project Magellan. That will make the project completely my own, rather than having to function as a wrapper around GPT 4.0.
+
 ## Features
 
 - **Portfolio Analysis**: Mathematical scoring for risk, diversification, and goal alignment
