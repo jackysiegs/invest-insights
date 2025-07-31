@@ -1,7 +1,8 @@
 # Invest Insights
-<img width="1675" height="1264" alt="Screenshot 2025-07-24 141547" src="https://github.com/user-attachments/assets/4f32a1f3-e57c-471e-b4b3-9f9f97a4872d" />
-<img width="1669" height="1267" alt="Screenshot 2025-07-24 141602" src="https://github.com/user-attachments/assets/1cedad51-4221-4462-8282-c26910e728c5" />
-<img width="1668" height="1267" alt="Screenshot 2025-07-24 141615" src="https://github.com/user-attachments/assets/b88c3950-fd4c-4aa9-ad7e-572d391d4106" />
+<img width="1671" height="1177" alt="Screenshot 2025-07-30 224224" src="https://github.com/user-attachments/assets/d2136bc8-b9fe-429f-9a3a-2340c2e68919" />
+<img width="1670" height="1262" alt="Screenshot 2025-07-30 224238" src="https://github.com/user-attachments/assets/6128c85e-8570-4088-a844-cb6cfc12a3cf" />
+<img width="1666" height="1259" alt="Screenshot 2025-07-30 224301" src="https://github.com/user-attachments/assets/50f568c9-41c1-4e06-8fe5-c3cb0795d383" />
+
 
 A comprehensive financial portfolio analysis application that combines mathematical scoring with AI-generated qualitative insights. Built with Spring Boot, Angular, and OpenAI GPT-4.
 
@@ -16,49 +17,6 @@ In future development I plan to train and implement my own investment insight mo
 - **Multi-Client Management**: Advisor dashboard for managing multiple client portfolios
 - **Comprehensive Reporting**: Detailed analysis with actionable recommendations
 - **Automatic Setup**: Fresh installations work immediately with demo data and admin user
-
-## Latest Features (July 2025)
-
-### **🎯 Version Tracking System**
-- **Version Badge**: Displays current version next to "Invest Insights" logo in navbar
-- **Automatic Updates**: Version automatically updates from `package.json` during build process
-- **Build Integration**: Custom Node.js script with `prebuild` hook for build-time version injection
-
-### **🎯 Enhanced Dashboard Experience**
-- **Smart Portfolio Updates**: Portfolio overview utilities update immediately upon client selection
-- **Clickable Portfolio Cards**: Dashboard carousel cards are now clickable for quick portfolio detail access
-- **AI Analysis Integration**: "AI Analysis" button on portfolio cards navigates and generates insights automatically
-- **Smart Back Navigation**: Back button intelligently returns to source tab (Dashboard or Portfolios)
-
-### **🎯 Professional Loading States**
-- **Full-Screen Loading Animation**: Professional loading overlay during AI insight generation
-- **Non-Intrusive Design**: Gray overlay with white text and spinning loader that doesn't affect layout
-- **High Z-Index Coverage**: Ensures loading animation appears above all content including navbar
-
-### **🎯 Portfolio Creation System**
-- **Complete Modal Interface**: Full-featured portfolio creation modal with form validation
-- **Client Integration**: Modal requires client selection and displays client information
-- **Professional Styling**: Matches project design system with white background and blue accents
-- **Form Validation**: Field-specific error messages with sleek red styling
-- **Success Feedback**: Toast notifications for successful portfolio creation
-
-### **🎯 Enhanced Market News**
-- **Personalized Context**: Market news shows "for [Client Name]" subtitle
-- **Original Timestamps**: News times reflect article's original posting time, not update time
-- **API Integration**: Enhanced Finnhub API integration with original time extraction
-
-### **🎯 Navigation & Accessibility**
-- **Scroll-to-Top Button**: Appears on AI Insights tab when scrolling beyond 300px
-- **Smooth Scrolling**: Professional circular button with smooth scroll-to-top functionality
-- **Copy Debug Info**: Button to copy all debug information to clipboard for troubleshooting
-- **Event Propagation Fixes**: Resolved carousel button conflicts with clickable portfolio cards
-
-### **🎯 User Experience Improvements**
-- **Immediate Feedback**: All user actions provide immediate visual feedback
-- **Professional Animations**: Smooth transitions and hover effects throughout the application
-- **Responsive Design**: All new features work seamlessly across different screen sizes
-- **Error Handling**: Comprehensive error handling with user-friendly messages
-- **State Persistence**: Client and portfolio selections persist across tab switches
 
 ## Architecture
 
@@ -315,17 +273,45 @@ docker-compose exec -T postgres psql -U iiAdmin -d invest_insights -c "SELECT CO
 4. Add tests if applicable
 5. Submit a pull request
 
-## Recent Updates
+## Latest Features (July 2025)
 
-### Database Initialization Fix (Latest)
-- **Problem**: Fresh GitHub downloads failed login due to database initialization issues
-- **Solution**: Complete rewrite of database initialization system
-- **Result**: Fresh installations work immediately with working login
-- **Status**: Production ready for GitHub deployment
+### **Version Tracking System**
+- **Version Badge**: Displays current version next to "Invest Insights" logo in navbar
+- **Automatic Updates**: Version automatically updates from `package.json` during build process
+- **Build Integration**: Custom Node.js script with `prebuild` hook for build-time version injection
 
-**Key Improvements**:
-- Automatic table creation on container startup
-- Proper foreign key relationships
-- Admin user created automatically
-- No manual database setup required
-- JPA compatibility maintained
+### **Enhanced Dashboard Experience**
+- **Smart Portfolio Updates**: Portfolio overview utilities update immediately upon client selection
+- **Clickable Portfolio Cards**: Dashboard carousel cards are now clickable for quick portfolio detail access
+- **AI Analysis Integration**: "AI Analysis" button on portfolio cards navigates and generates insights automatically
+- **Smart Back Navigation**: Back button intelligently returns to source tab (Dashboard or Portfolios)
+
+### **Professional Loading States**
+- **Full-Screen Loading Animation**: Professional loading overlay during AI insight generation
+- **Non-Intrusive Design**: Gray overlay with white text and spinning loader that doesn't affect layout
+- **High Z-Index Coverage**: Ensures loading animation appears above all content including navbar
+
+### **Portfolio Creation System**
+- **Complete Modal Interface**: Full-featured portfolio creation modal with form validation
+- **Client Integration**: Modal requires client selection and displays client information
+- **Professional Styling**: Matches project design system with white background and blue accents
+- **Form Validation**: Field-specific error messages with sleek red styling
+- **Success Feedback**: Toast notifications for successful portfolio creation
+
+### **Enhanced Market News**
+- **Personalized Context**: Market news shows "for [Client Name]" subtitle
+- **Original Timestamps**: News times reflect article's original posting time, not update time
+- **API Integration**: Enhanced Finnhub API integration with original time extraction
+
+### **Navigation & Accessibility**
+- **Scroll-to-Top Button**: Appears on AI Insights tab when scrolling beyond 300px
+- **Smooth Scrolling**: Professional circular button with smooth scroll-to-top functionality
+- **Copy Debug Info**: Button to copy all debug information to clipboard for troubleshooting
+- **Event Propagation Fixes**: Resolved carousel button conflicts with clickable portfolio cards
+
+### **User Experience Improvements**
+- **Immediate Feedback**: All user actions provide immediate visual feedback
+- **Professional Animations**: Smooth transitions and hover effects throughout the application
+- **Responsive Design**: All new features work seamlessly across different screen sizes
+- **Error Handling**: Comprehensive error handling with user-friendly messages
+- **State Persistence**: Client and portfolio selections persist across tab switches
