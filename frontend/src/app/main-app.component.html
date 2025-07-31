@@ -3,7 +3,7 @@
   <header class="header">
     <div class="header-content">
       <div class="logo">
-        <h1>💰 Invest Insights</h1>
+        <h1>💰 Invest Insights <span class="version-badge">{{ appVersion }}</span></h1>
       </div>
       
       <!-- Recent Users Selector -->
@@ -87,11 +87,15 @@
     <div *ngIf="activeTab === 'dashboard'" class="tab-content">
       <div class="dashboard-grid">
         <!-- Portfolio Overview Card -->
-        <div class="card portfolio-overview">
+        <div class="card portfolio-overview" 
+             [class.clickable]="selectedPortfolio"
+             (click)="selectedPortfolio ? viewPortfolio(selectedPortfolio.id) : null"
+             [style.cursor]="selectedPortfolio ? 'pointer' : 'default'">
+          <div class="portfolio-overview-indicator" *ngIf="selectedPortfolio">Click to view details →</div>
           <h2>Portfolio Overview</h2>
           
           <!-- Portfolio Carousel Controls (only show if client has portfolios) -->
-          <div class="portfolio-carousel-controls" *ngIf="selectedClientId && portfolios.length > 1">
+          <div class="portfolio-carousel-controls" *ngIf="selectedClientId && portfolios.length > 1" (click)="$event.stopPropagation()">
             <div class="carousel-dots">
               <button 
                 *ngFor="let portfolio of getVisiblePortfolios(); let i = index" 
@@ -245,13 +249,13 @@
 
         <!-- Market News Card -->
         <div class="card market-news">
-          <h2>Market News</h2>
+          <h2>Market News <span class="news-subtitle">for {{ selectedClient?.name || 'General Market' }}</span></h2>
           <div class="news-horizontal-container" *ngIf="marketNews.length > 0; else noNews">
             <div class="news-horizontal-list">
               <div *ngFor="let news of marketNews" class="news-horizontal-item">
                 <div class="news-horizontal-header">
                   <h4 class="news-headline">{{ news.headline }}</h4>
-                  <span class="news-time">{{ lastNewsUpdate | date:'shortTime' }}</span>
+                  <span class="news-time">{{ news.originalTime ? (news.originalTime | date:'shortTime') : (lastNewsUpdate | date:'shortTime') }}</span>
                 </div>
                 <p class="news-summary">{{ news.summary }}</p>
                 <a *ngIf="news.url" [href]="news.url" target="_blank" class="news-link">Read More →</a>
@@ -406,8 +410,17 @@
         </div>
       </div>
 
+              <!-- Loading Overlay -->
+        <div class="loading-overlay" *ngIf="selectedClientId && isGeneratingInsight">
+          <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Generating AI Insight</h3>
+            <p>Please wait while we analyze your portfolio...</p>
+          </div>
+        </div>
+
       <!-- Current Insight Display -->
-      <div class="insight-result" *ngIf="selectedClientId && currentInsight">
+      <div class="insight-result" *ngIf="selectedClientId && currentInsight && !isGeneratingInsight">
         <!-- Insight Summary Card -->
         <div class="insight-summary-card">
           <div class="summary-header">
@@ -485,9 +498,14 @@
           <div class="debug-section" *ngIf="getDebugInfo()">
             <h4>Debug Information</h4>
             <div class="debug-content">
-              <button class="debug-toggle" (click)="showDebugInfo = !showDebugInfo">
-                {{ showDebugInfo ? 'Hide' : 'Show' }} Debug Info
-              </button>
+              <div class="debug-buttons">
+                <button class="debug-toggle" (click)="showDebugInfo = !showDebugInfo">
+                  {{ showDebugInfo ? 'Hide' : 'Show' }} Debug Info
+                </button>
+                <button class="debug-copy" (click)="copyDebugInfo()" title="Copy debug info to clipboard">
+                  📋 Copy
+                </button>
+              </div>
               <div class="debug-text" *ngIf="showDebugInfo">
                 <pre>{{ formatDebugInfo() }}</pre>
               </div>
@@ -654,6 +672,16 @@
           </div>
         </div>
       </div>
+
+      <!-- Scroll to Top Button (only show on AI Insights tab when scrolled) -->
+      <button 
+        class="scroll-to-top-btn" 
+        *ngIf="activeTab === 'insights' && showScrollToTop"
+        (click)="scrollToTop()"
+        title="Scroll to top"
+      >
+        <span class="scroll-arrow">↑</span>
+      </button>
     </div>
 
     <!-- Settings Tab -->
@@ -691,6 +719,25 @@
     <div class="loading-spinner">
       <div class="spinner"></div>
       <p>Loading...</p>
+    </div>
+  </div>
+
+  <!-- Portfolio Creation Modal -->
+  <app-portfolio-create-modal
+    [isOpen]="showCreatePortfolioModal"
+    [selectedClient]="selectedClient"
+    (closeModal)="onCloseCreatePortfolioModal()"
+    (portfolioCreated)="onPortfolioCreated($event)"
+  ></app-portfolio-create-modal>
+
+  <!-- Notification Toast -->
+  <div class="notification-toast" *ngIf="showNotification" [class]="notificationType">
+    <div class="notification-content">
+      <span class="notification-icon">
+        {{ notificationType === 'success' ? '✅' : '❌' }}
+      </span>
+      <span class="notification-message">{{ notificationMessage }}</span>
+      <button class="notification-close" (click)="closeNotification()">×</button>
     </div>
   </div>
 </div> 

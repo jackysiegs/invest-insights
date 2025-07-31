@@ -37,6 +37,7 @@ export class PortfolioDetailComponent implements OnInit {
   
   // UI state
   activeSection: string = 'overview';
+  sourceTab: string = 'portfolios'; // Track where user came from
 
   // Insights
   recentInsights: InvestmentInsight[] = [];
@@ -63,6 +64,11 @@ export class PortfolioDetailComponent implements OnInit {
         this.loadPortfolioHoldings();
         this.loadInsightsForPortfolio();
       }
+    });
+
+    // Get the source tab from query parameters
+    this.route.queryParams.subscribe(queryParams => {
+      this.sourceTab = queryParams['sourceTab'] || 'portfolios';
     });
   }
 
@@ -200,7 +206,7 @@ export class PortfolioDetailComponent implements OnInit {
       
       this.router.navigate(['/dashboard'], { 
         queryParams: { 
-          tab: 'portfolios',
+          tab: this.sourceTab, // Navigate back to the tab user came from
           clientId: clientId,
           clientName: clientName
         } 

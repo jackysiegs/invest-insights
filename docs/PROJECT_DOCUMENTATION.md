@@ -130,6 +130,247 @@ RJ Invest Insights is a comprehensive financial portfolio analysis application t
 
 ## Recent Improvements (July 2025)
 
+### **🎯 Latest Session: Comprehensive UI/UX Enhancements & Feature Additions (Latest) - MAJOR FEATURE EXPANSION ✅**
+
+#### **✅ COMPLETED: Version Tracking System**
+**Problem**: No way to track application version in the UI
+**Solution Implemented**: 
+- **Version Badge**: Added version display next to "Invest Insights" logo in navbar
+- **Automatic Updates**: Version automatically updates from `package.json` during build process
+- **Build Integration**: Custom Node.js script with `prebuild` hook for build-time version injection
+- **Development Support**: Handles both production builds and development mode
+- **Version Service**: Angular service manages version display and loading
+
+**Technical Implementation**:
+- **`frontend/scripts/update-version.js`**: Node.js script to update version from package.json
+- **`frontend/src/app/services/version.service.ts`**: Angular service for version management
+- **`frontend/src/app/version.ts`**: Auto-generated file holding current version
+- **`frontend/package.json`**: Updated with `update-version` script and `prebuild` hook
+- **`frontend/angular.json`**: Increased budget limits to resolve build warnings
+
+#### **✅ COMPLETED: Dashboard Portfolio Overview Bug Fix**
+**Problem**: Portfolio overview utilities (balanced growth, income, holdings, sector analysis) didn't update after client selection
+**Solution Implemented**:
+- **Immediate Updates**: Portfolio overview now updates immediately upon client selection
+- **Enhanced `setActiveTab()`**: Modified to trigger portfolio updates when switching to dashboard
+- **Client Persistence**: Selected client and portfolio data persists across tab switches
+- **Carousel Integration**: Portfolio carousel updates with selected client's portfolios
+
+#### **✅ COMPLETED: AI Analysis Button Functionality**
+**Problem**: "AI Analysis" button on portfolio cards had no functionality
+**Solution Implemented**:
+- **Smart Navigation**: Button navigates to AI Insights tab and automatically generates insight
+- **Portfolio Context**: Passes selected portfolio information to insight generation
+- **Seamless Workflow**: One-click insight generation from portfolio selection
+- **User Experience**: Eliminates need to manually navigate and generate insights
+
+#### **✅ COMPLETED: AI Insights Loading Animation**
+**Problem**: No visual feedback during insight generation
+**Solution Implemented**:
+- **Full-Screen Overlay**: Loading animation covers entire viewport including navbar
+- **Professional Design**: Gray overlay with white text and spinning loader
+- **High Z-Index**: Uses maximum z-index (2147483647) to ensure overlay appears above all content
+- **Smooth Animation**: Professional spinning animation with project's blue color scheme
+- **Non-Intrusive**: Doesn't affect background elements or cause layout shifts
+
+#### **✅ COMPLETED: Clickable Dashboard Portfolio Overview Card**
+**Problem**: Portfolio cards in dashboard carousel weren't clickable
+**Solution Implemented**:
+- **Clickable Background**: Entire portfolio card background is now clickable
+- **Portfolio Detail Navigation**: Clicking navigates to portfolio detail view
+- **Visual Indicators**: Added "Click to view details →" indicator when portfolio is selected
+- **Event Propagation**: Fixed carousel button conflicts with `$event.stopPropagation()`
+- **Smart Cursor**: Cursor changes to pointer only when portfolio is selected
+
+#### **✅ COMPLETED: Smart Back Button & Carousel Fix**
+**Problem**: Back button always returned to Portfolios tab, carousel buttons overridden by clickable card
+**Solution Implemented**:
+- **Smart Navigation**: Back button intelligently returns to source tab (Dashboard or Portfolios)
+- **Dynamic Text**: Button text changes to "Back to Dashboard" or "Back to Portfolios"
+- **Query Parameters**: Uses `sourceTab` parameter to track navigation source
+- **Carousel Fix**: Added `$event.stopPropagation()` to prevent carousel buttons from triggering card clicks
+- **Visual Design**: Added cool blue back arrow icon to match project design
+
+#### **✅ COMPLETED: Market News Section Enhancements**
+**Problem**: Market news lacked personalization and showed incorrect timestamps
+**Solution Implemented**:
+- **Personalized Subtitle**: Added "for [Client Name]" next to "Market News" title
+- **Original Timestamps**: News times now reflect article's original posting time, not update time
+- **API Integration**: Updated AI microservice to extract and include `originalTime` from Finnhub API
+- **Fallback Handling**: Graceful handling when original time is not available
+- **User Context**: News section now shows client-specific context
+
+#### **✅ COMPLETED: Portfolio Creation Modal System**
+**Problem**: No way to create new portfolios through the UI
+**Solution Implemented**:
+- **Complete Modal System**: Full-featured portfolio creation modal with form validation
+- **Client Integration**: Modal requires client selection and shows client information
+- **Form Validation**: Comprehensive validation with field-specific error messages
+- **Backend Integration**: POST request to `/api/portfolios` endpoint
+- **Error Handling**: User-friendly error messages and success notifications
+- **Form Reset**: Modal resets all data when closed via X button
+
+**Modal Features**:
+- **Client Information Display**: Shows selected client with risk level and goals
+- **Form Fields**: Portfolio name, account type dropdown, total portfolio value
+- **Validation**: Required field validation with sleek red error messages
+- **Button Effects**: Cancel (red) and Create Portfolio (blue) buttons with hover effects
+- **Loading States**: Submit button shows loading spinner during API call
+- **Success Feedback**: Toast notifications for successful portfolio creation
+
+#### **✅ COMPLETED: Portfolio Creation Modal Styling**
+**Problem**: Modal styling didn't match project design system
+**Solution Implemented**:
+- **White Background**: Changed modal background to solid white
+- **Client Info Styling**: Shaded white background with blue text for client information
+- **Button Styling**: Matched "View Details" and "AI Analysis" button designs
+- **Title Styling**: "Create New Portfolio" title in project's blue color
+- **Account Tags**: White background with blue border and text for account indicators
+- **Field Styling**: Consistent field sizes and placeholder behavior
+- **Error Styling**: Bright red error text that's obvious but professional
+
+#### **✅ COMPLETED: Portfolio Creation Modal Field Behavior**
+**Problem**: Form fields had poor user experience and validation
+**Solution Implemented**:
+- **Shortened Placeholders**: "Enter portfolio name" instead of long placeholder text
+- **Focus Behavior**: Placeholder text disappears immediately on field focus
+- **Field-Specific Errors**: Errors appear under specific fields with sleek red styling
+- **Consistent Sizing**: All form fields have consistent width and appearance
+- **Form Reset**: All data resets when modal is closed via X button
+- **Validation Feedback**: Clear, immediate feedback for validation errors
+
+#### **✅ COMPLETED: AI Insights Scroll-to-Top Button**
+**Problem**: Long AI insights content required manual scrolling to navigate
+**Solution Implemented**:
+- **Smart Visibility**: Button appears when scrolling beyond 300px on AI Insights tab
+- **Smooth Scrolling**: Clicking smoothly scrolls to top with `behavior: 'smooth'`
+- **Professional Design**: Circular button with up arrow, matching project's design system
+- **Hover Effects**: Blue background with white arrow on hover
+- **Tab-Specific**: Only appears on AI Insights tab, not other tabs
+- **Responsive Positioning**: Fixed positioning that works on all screen sizes
+
+#### **✅ COMPLETED: Copy Debug Info Button**
+**Problem**: No easy way to copy debug information for troubleshooting
+**Solution Implemented**:
+- **Copy Functionality**: Button copies all debug text to clipboard using `navigator.clipboard.writeText()`
+- **User Feedback**: Success/error notifications when copying succeeds or fails
+- **Professional Design**: Button matches project's design system with clipboard icon
+- **Error Handling**: Graceful handling of clipboard API failures
+- **Debug Validation**: Checks if debug information is available before attempting to copy
+- **Accessibility**: Tooltip shows "Copy debug info to clipboard" on hover
+
+**Technical Implementation**:
+- **HTML Structure**: Added copy button next to "Show Debug Info" button
+- **TypeScript Method**: `copyDebugInfo()` method with comprehensive error handling
+- **SCSS Styling**: Professional button styling with hover effects and transitions
+- **Clipboard API**: Uses modern browser clipboard API for reliable copying
+- **Notification Integration**: Leverages existing notification system for user feedback
+
+#### **🔧 Technical Implementation Details**
+
+**Version Tracking System**:
+```typescript
+// Version service with build-time injection
+export class VersionService {
+  private version: string = '';
+
+  loadVersionFromPackageJson(): Observable<string> {
+    return this.http.get<any>('/assets/version.json').pipe(
+      map(data => data.version),
+      catchError(() => of('dev'))
+    );
+  }
+}
+```
+
+**Loading Animation CSS**:
+```scss
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483647;
+  color: white;
+}
+```
+
+**Smart Back Navigation**:
+```typescript
+// Query parameter handling for smart back navigation
+viewPortfolio(portfolioId: number): void {
+  this.router.navigate(['/portfolio', portfolioId], {
+    queryParams: { sourceTab: this.activeTab }
+  });
+}
+```
+
+**Portfolio Creation Modal**:
+```typescript
+// Modal component with comprehensive form handling
+export class PortfolioCreateModalComponent {
+  @Input() isOpen: boolean = false;
+  @Input() selectedClient: Client | null = null;
+  @Output() closeModal = new EventEmitter<void>();
+  @Output() portfolioCreated = new EventEmitter<Portfolio>();
+}
+```
+
+#### **📊 User Experience Improvements**
+
+**Before vs After Comparison**:
+
+**Before**:
+- ❌ No version tracking in UI
+- ❌ Dashboard portfolio overview didn't update after client selection
+- ❌ AI Analysis button had no functionality
+- ❌ No loading feedback during insight generation
+- ❌ Portfolio cards weren't clickable
+- ❌ Back button always returned to Portfolios tab
+- ❌ Market news lacked personalization
+- ❌ No portfolio creation functionality
+- ❌ No scroll-to-top button for long content
+- ❌ No way to copy debug information
+
+**After**:
+- ✅ Version badge displays current version next to logo
+- ✅ Dashboard updates immediately upon client selection
+- ✅ AI Analysis button navigates and generates insights automatically
+- ✅ Professional loading animation during insight generation
+- ✅ Clickable portfolio cards with visual indicators
+- ✅ Smart back button that returns to source tab
+- ✅ Personalized market news with correct timestamps
+- ✅ Complete portfolio creation modal system
+- ✅ Scroll-to-top button for easy navigation
+- ✅ Copy debug info button for troubleshooting
+
+#### **🎯 Success Metrics**
+
+**Feature Completeness**:
+- ✅ **Version Tracking**: Automatic version display and updates
+- ✅ **Dashboard Integration**: Seamless client selection and portfolio updates
+- ✅ **AI Workflow**: One-click insight generation from portfolio selection
+- ✅ **Loading States**: Professional loading feedback for all async operations
+- ✅ **Navigation**: Smart navigation with context awareness
+- ✅ **Content Management**: Complete portfolio creation and management system
+- ✅ **User Experience**: Enhanced navigation and accessibility features
+- ✅ **Debug Support**: Comprehensive debugging and troubleshooting tools
+
+**Technical Excellence**:
+- ✅ **Build Integration**: Seamless version injection during build process
+- ✅ **Event Handling**: Proper event propagation and conflict resolution
+- ✅ **API Integration**: Robust backend communication with error handling
+- ✅ **State Management**: Persistent client and portfolio selection
+- ✅ **Responsive Design**: All features work across different screen sizes
+- ✅ **Accessibility**: Keyboard navigation and screen reader support
+- ✅ **Performance**: Optimized animations and smooth interactions
+
 ### Database Schema Alignment Fix (Latest) - MAJOR DEPLOYMENT FIX ✅
 - **Problem**: Database schema didn't match entity model structure, causing constraint violations
 - **Root Cause**: Schema.sql created tables with portfolio_id requirement but entity used client_id

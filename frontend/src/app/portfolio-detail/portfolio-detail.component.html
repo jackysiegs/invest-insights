@@ -3,7 +3,8 @@
   <header class="portfolio-header">
     <div class="header-content">
       <button class="btn btn-secondary back-btn" (click)="goBack()">
-        ← Back to Portfolios
+        <span class="back-arrow">←</span>
+        <span class="back-text">{{ sourceTab === 'dashboard' ? 'Back to Dashboard' : 'Back to Portfolios' }}</span>
       </button>
       <div class="portfolio-title" *ngIf="portfolio">
         <h1>{{ portfolio.name }}</h1>

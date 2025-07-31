@@ -1,10 +1,12 @@
 {
   "name": "frontend",
-  "version": "0.0.0",
+  "version": "1.0.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
+    "update-version": "node scripts/update-version.js",
+    "prebuild": "npm run update-version",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

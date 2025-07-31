@@ -151,13 +151,23 @@ def get_market_news(limit=5):
         response = requests.get(url, timeout=10)  # Add timeout
         if response.status_code == 200:
             news_data = response.json()
-            # Return structured news data with headlines and URLs
+            # Return structured news data with headlines, URLs, and original posting time
             news_items = []
             for article in news_data[:limit]:
+                # Convert timestamp to datetime if it exists
+                original_time = None
+                if 'datetime' in article and article['datetime']:
+                    try:
+                        # Finnhub uses Unix timestamp in seconds
+                        original_time = datetime.fromtimestamp(article['datetime'])
+                    except (ValueError, TypeError):
+                        original_time = None
+                
                 news_items.append({
                     'headline': article['headline'],
                     'url': article.get('url', 'https://finnhub.io'),  # Use article URL or fallback
-                    'summary': article.get('summary', article['headline'])  # Use summary or headline as fallback
+                    'summary': article.get('summary', article['headline']),  # Use summary or headline as fallback
+                    'originalTime': original_time.isoformat() if original_time else None  # Include original posting time
                 })
             
             # Cache the results
@@ -445,10 +455,20 @@ def get_company_specific_news(tickers, limit=3):
                 if news_data:
                     # Get the most recent news
                     latest_news = news_data[0]
+                    # Convert timestamp to datetime if it exists
+                    original_time = None
+                    if 'datetime' in latest_news and latest_news['datetime']:
+                        try:
+                            # Finnhub uses Unix timestamp in seconds
+                            original_time = datetime.fromtimestamp(latest_news['datetime'])
+                        except (ValueError, TypeError):
+                            original_time = None
+                    
                     company_news.append({
                         'headline': f"{ticker}: {latest_news['headline']}",
                         'url': latest_news.get('url', f'https://finnhub.io/quote/{ticker}'),  # Use article URL or ticker page
-                        'summary': latest_news.get('summary', latest_news['headline'])  # Use summary or headline as fallback
+                        'summary': latest_news.get('summary', latest_news['headline']),  # Use summary or headline as fallback
+                        'originalTime': original_time.isoformat() if original_time else None  # Include original posting time
                     })
             elif response.status_code == 429:
                 print(f"Rate limit exceeded for {ticker}")
@@ -548,19 +568,22 @@ def get_portfolio_news_endpoint(request: PortfolioNewsRequest):
             all_news.append({
                 'headline': 'Portfolio analysis shows continued market opportunities and strategic positioning.',
                 'url': 'https://finnhub.io',
-                'summary': 'Portfolio analysis shows continued market opportunities and strategic positioning.'
+                'summary': 'Portfolio analysis shows continued market opportunities and strategic positioning.',
+                'originalTime': None
             })
         elif len(all_news) == 1:
             all_news.append({
                 'headline': 'Focus on diversification and risk management for optimal portfolio performance.',
                 'url': 'https://finnhub.io',
-                'summary': 'Focus on diversification and risk management for optimal portfolio performance.'
+                'summary': 'Focus on diversification and risk management for optimal portfolio performance.',
+                'originalTime': None
             })
         else:
             all_news.append({
                 'headline': 'Current market conditions support strategic portfolio adjustments and rebalancing.',
                 'url': 'https://finnhub.io',
-                'summary': 'Current market conditions support strategic portfolio adjustments and rebalancing.'
+                'summary': 'Current market conditions support strategic portfolio adjustments and rebalancing.',
+                'originalTime': None
             })
     
     # Return up to 3 news items

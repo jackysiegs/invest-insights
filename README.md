@@ -17,6 +17,49 @@ In future development I plan to train and implement my own investment insight mo
 - **Comprehensive Reporting**: Detailed analysis with actionable recommendations
 - **Automatic Setup**: Fresh installations work immediately with demo data and admin user
 
+## Latest Features (July 2025)
+
+### **🎯 Version Tracking System**
+- **Version Badge**: Displays current version next to "Invest Insights" logo in navbar
+- **Automatic Updates**: Version automatically updates from `package.json` during build process
+- **Build Integration**: Custom Node.js script with `prebuild` hook for build-time version injection
+
+### **🎯 Enhanced Dashboard Experience**
+- **Smart Portfolio Updates**: Portfolio overview utilities update immediately upon client selection
+- **Clickable Portfolio Cards**: Dashboard carousel cards are now clickable for quick portfolio detail access
+- **AI Analysis Integration**: "AI Analysis" button on portfolio cards navigates and generates insights automatically
+- **Smart Back Navigation**: Back button intelligently returns to source tab (Dashboard or Portfolios)
+
+### **🎯 Professional Loading States**
+- **Full-Screen Loading Animation**: Professional loading overlay during AI insight generation
+- **Non-Intrusive Design**: Gray overlay with white text and spinning loader that doesn't affect layout
+- **High Z-Index Coverage**: Ensures loading animation appears above all content including navbar
+
+### **🎯 Portfolio Creation System**
+- **Complete Modal Interface**: Full-featured portfolio creation modal with form validation
+- **Client Integration**: Modal requires client selection and displays client information
+- **Professional Styling**: Matches project design system with white background and blue accents
+- **Form Validation**: Field-specific error messages with sleek red styling
+- **Success Feedback**: Toast notifications for successful portfolio creation
+
+### **🎯 Enhanced Market News**
+- **Personalized Context**: Market news shows "for [Client Name]" subtitle
+- **Original Timestamps**: News times reflect article's original posting time, not update time
+- **API Integration**: Enhanced Finnhub API integration with original time extraction
+
+### **🎯 Navigation & Accessibility**
+- **Scroll-to-Top Button**: Appears on AI Insights tab when scrolling beyond 300px
+- **Smooth Scrolling**: Professional circular button with smooth scroll-to-top functionality
+- **Copy Debug Info**: Button to copy all debug information to clipboard for troubleshooting
+- **Event Propagation Fixes**: Resolved carousel button conflicts with clickable portfolio cards
+
+### **🎯 User Experience Improvements**
+- **Immediate Feedback**: All user actions provide immediate visual feedback
+- **Professional Animations**: Smooth transitions and hover effects throughout the application
+- **Responsive Design**: All new features work seamlessly across different screen sizes
+- **Error Handling**: Comprehensive error handling with user-friendly messages
+- **State Persistence**: Client and portfolio selections persist across tab switches
+
 ## Architecture
 
 - **Backend**: Java Spring Boot with PostgreSQL

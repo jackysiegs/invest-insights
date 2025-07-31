@@ -75,6 +75,24 @@ body {
   gap: 0.5rem;
 }
 
+.version-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--background-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  margin-left: 0.5rem;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+
+.version-badge:hover {
+  opacity: 1;
+  background: var(--border-color);
+}
+
 .nav {
   display: flex;
   gap: 0.5rem;
@@ -399,11 +417,11 @@ body {
   color: var(--text-primary);
   
   &.positive {
-    color: #28a745;
+    color: #025b17;
   }
   
   &.negative {
-    color: #dc3545;
+    color: #7a0612;
   }
 }
 
@@ -945,6 +963,24 @@ body {
 // Market News Card - Full Width for Horizontal Layout
 .market-news {
   grid-column: 1 / -1; // Span full width
+  
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    
+    .news-subtitle {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      opacity: 0.8;
+      background: var(--background-color);
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+  }
 }
 
 // Legacy vertical news styles (keeping for compatibility)
@@ -1214,15 +1250,15 @@ body {
           }
 
           .risk-fill {
-            background: linear-gradient(90deg, #10b981, #f59e0b, #dc2626);
+            background: linear-gradient(90deg, #033f2b, #744896, #5e085b);
           }
 
           .diversification-fill {
-            background: linear-gradient(90deg, #dc2626, #f59e0b, #10b981);
+            background: linear-gradient(90deg, #024133, #a243a7, #430549);
           }
 
           .alignment-fill {
-            background: linear-gradient(90deg, #dc2626, #f59e0b, #10b981);
+            background: linear-gradient(90deg, #04342e, #963a98, #550344);
           }
         }
       }
@@ -1320,7 +1356,7 @@ body {
 
             &.negative {
               background: #fef2f2;
-              color: #dc2626;
+              color: #6f0404;
               border: 1px solid #fecaca;
             }
 
@@ -2029,6 +2065,58 @@ body {
   width: 100%;
 }
 
+// Clickable Portfolio Overview Card
+.portfolio-overview {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &.clickable {
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(1, 38, 63, 0.02), rgba(1, 38, 63, 0.05));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      
+      &::before {
+        opacity: 1;
+      }
+      
+      .portfolio-overview-indicator {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  }
+  
+  .portfolio-overview-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(1, 38, 63, 0.1);
+    color: var(--primary-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+}
+
 // Portfolio Carousel Controls
 .portfolio-carousel-controls {
   margin-bottom: 1.5rem;
@@ -2544,19 +2632,19 @@ body {
   
   &.priority-high {
     background: #fef2f2;
-    color: #dc2626;
+    color: #6d0000;
     border: 1px solid #fecaca;
   }
   
   &.priority-medium {
     background: #fffbeb;
-    color: #d97706;
+    color: #5c3304;
     border: 1px solid #fed7aa;
   }
   
   &.priority-low {
     background: #f0fdf4;
-    color: #16a34a;
+    color: #055f26;
     border: 1px solid #bbf7d0;
   }
 }
@@ -2578,7 +2666,7 @@ body {
 }
 
 .rec-allocation {
-  color: #059669;
+  color: #7c3aed;
   font-weight: 500;
 }
 
@@ -2593,7 +2681,7 @@ body {
 }
 
 .rec-impact {
-  color: #dc2626;
+  color: #7c0059;
   font-weight: 500;
 }
 
@@ -2901,6 +2989,12 @@ body {
   }
 
   .debug-content {
+    .debug-buttons {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
     .debug-toggle {
       background: #f3f4f6;
       border: 1px solid #d1d5db;
@@ -2914,6 +3008,32 @@ body {
       &:hover {
         background: #e5e7eb;
         border-color: #9ca3af;
+      }
+    }
+
+    .debug-copy {
+      background: white;
+      border: 2px solid rgb(1, 38, 63);
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      color: rgb(1, 38, 63);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      &:hover {
+        background: rgb(1, 38, 63);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(1, 38, 63, 0.2);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(1, 38, 63, 0.2);
       }
     }
 
@@ -2937,4 +3057,232 @@ body {
       }
     }
   }
-} 
+}
+
+// AI Insights Loading Overlay
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2147483647;
+  pointer-events: auto;
+  isolation: isolate;
+  
+  .loading-content {
+    background: linear-gradient(135deg, var(--primary-color), #1e3a8a);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    .loading-spinner {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        border-top: 3px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 1.2s linear infinite;
+      }
+      
+      &::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 60px;
+        height: 60px;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-top: 2px solid rgba(255, 255, 255, 0.6);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite reverse;
+      }
+    }
+    
+    h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+// Loading animation
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive adjustments for loading overlay
+@media (max-width: 768px) {
+  .loading-overlay {
+    .loading-content {
+      padding: 2rem;
+      
+      .loading-spinner {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
+        
+        &::after {
+          top: 8px;
+          left: 8px;
+          width: 44px;
+          height: 44px;
+        }
+      }
+      
+      h3 {
+        font-size: 1.1rem;
+      }
+      
+      p {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+// Notification Toast
+.notification-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2147483646;
+  max-width: 400px;
+  animation: slideInRight 0.3s ease-out;
+
+  &.success {
+    .notification-content {
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: 1px solid #047857;
+    }
+  }
+
+  &.error {
+    .notification-content {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border: 1px solid #b91c1c;
+    }
+  }
+
+  .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    color: white;
+    font-weight: 500;
+
+    .notification-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .notification-message {
+      flex: 1;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .notification-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+    }
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Scroll to Top Button
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid rgb(1, 38, 63);
+  color: rgb(1, 38, 63);
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  &:hover {
+    background: rgb(1, 38, 63);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  .scroll-arrow {
+    font-weight: bold;
+    line-height: 1;
+  }
+}
+

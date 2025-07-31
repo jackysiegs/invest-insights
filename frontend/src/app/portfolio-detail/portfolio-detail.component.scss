@@ -23,6 +23,34 @@
     .back-btn {
       white-space: nowrap;
       font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      
+      &:hover {
+        transform: translateX(-3px);
+        border-color: var(--primary-color);
+        background: linear-gradient(135deg, var(--primary-color), #1e3a8a);
+        color: white;
+        
+        .back-arrow {
+          transform: translateX(-2px);
+        }
+      }
+      
+      .back-arrow {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        transition: all 0.3s ease;
+        display: inline-block;
+      }
+      
+      .back-text {
+        font-weight: 500;
+      }
     }
 
     .portfolio-title {

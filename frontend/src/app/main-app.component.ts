@@ -7,11 +7,13 @@ import { timeout, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { InsightsService, InvestmentInsight } from './services/insights.service';
 import { InsightSectionComponent } from './components/insight-section/insight-section.component';
+import { VersionService } from './services/version.service';
+import { PortfolioCreateModalComponent } from './components/portfolio-create-modal/portfolio-create-modal.component';
 
 @Component({
   selector: 'app-main-app',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PortfolioCreateModalComponent],
   templateUrl: './main-app.component.html',
   styleUrl: './main-app.component.scss'
 })
@@ -64,6 +66,20 @@ export class MainAppComponent implements OnDestroy {
   isLoading: boolean = false;
   activeSectionTab: string = '';
   showDebugInfo: boolean = false;
+  
+  // Portfolio creation modal
+  showCreatePortfolioModal: boolean = false;
+  
+  // Notification system
+  showNotification: boolean = false;
+  notificationMessage: string = '';
+  notificationType: 'success' | 'error' = 'success';
+
+  // Scroll to top functionality
+  showScrollToTop: boolean = false;
+
+  // Version tracking
+  appVersion: string = 'v1.0.0';
 
   // Portfolio carousel properties
   currentPortfolioIndex: number = 0;
@@ -72,11 +88,15 @@ export class MainAppComponent implements OnDestroy {
   constructor(
     private router: Router, 
     private http: HttpClient,
-    private insightsService: InsightsService
+    private insightsService: InsightsService,
+    private versionService: VersionService
   ) {
     // Load user data from localStorage on component initialization
     this.loadUserData();
     // Don't load all portfolios initially - only load when client is selected
+    
+    // Load application version
+    this.loadAppVersion();
     
     // Check for query parameters to set active tab and restore client selection
     this.router.events.subscribe((event: any) => {
@@ -100,6 +120,27 @@ export class MainAppComponent implements OnDestroy {
         }
       }
     });
+
+    // Add scroll event listener for scroll-to-top functionality
+    this.setupScrollListener();
+  }
+
+  // Scroll to top functionality
+  private setupScrollListener(): void {
+    window.addEventListener('scroll', () => {
+      if (this.activeTab === 'insights') {
+        this.showScrollToTop = window.scrollY > 300; // Show after scrolling 300px
+      } else {
+        this.showScrollToTop = false;
+      }
+    });
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   }
   
   // Methods
@@ -112,6 +153,15 @@ export class MainAppComponent implements OnDestroy {
     } else if (this.portfolios.length > 0) {
       // Start carousel when returning to dashboard with portfolios
       this.startPortfolioCarousel();
+      
+      // Ensure portfolio overview is updated when returning to dashboard
+      if (this.selectedPortfolio) {
+        this.updatePortfolioOverview();
+      } else if (this.portfolios.length > 0) {
+        // If no portfolio is selected but we have portfolios, select the first one
+        this.currentPortfolioIndex = 0;
+        this.updateCarouselPortfolio();
+      }
     }
   }
   
@@ -290,16 +340,16 @@ export class MainAppComponent implements OnDestroy {
             // Clear selection if no previously selected portfolio
             this.selectedPortfolioId = '';
             this.selectedPortfolio = null;
-          }
-          
-          this.updatePortfolioOverview();
-          
-          // Start carousel if we have portfolios and we're on the dashboard
-          if (this.portfolios.length > 0 && this.activeTab === 'dashboard') {
-            this.currentPortfolioIndex = 0;
-            this.updateCarouselPortfolio();
-            this.startPortfolioCarousel();
-          }
+                      }
+            
+            this.updatePortfolioOverview();
+            
+            // Start carousel if we have portfolios and we're on the dashboard
+            if (this.portfolios.length > 0 && this.activeTab === 'dashboard') {
+              this.currentPortfolioIndex = 0;
+              this.updateCarouselPortfolio();
+              this.startPortfolioCarousel();
+            }
           
           this.isLoading = false;
         },
@@ -482,6 +532,45 @@ export class MainAppComponent implements OnDestroy {
         this.filteredRecentUsers = [];
       }
     }
+    
+    // Restore selected client and portfolio if they exist
+    this.restoreSelectedClientAndPortfolio();
+  }
+
+  private loadAppVersion(): void {
+    this.versionService.getFormattedVersion().subscribe(
+      version => {
+        this.appVersion = version;
+        console.log('App version loaded:', this.appVersion);
+      },
+      error => {
+        console.warn('Could not load app version:', error);
+        // Keep default version
+      }
+    );
+  }
+
+  private restoreSelectedClientAndPortfolio(): void {
+    // Restore selected client from localStorage
+    const storedClientId = localStorage.getItem('selectedClientId');
+    const storedClientName = localStorage.getItem('selectedClientName');
+    
+    if (storedClientId && storedClientName && this.clients.length > 0) {
+      // Find the client in the loaded clients array
+      const client = this.clients.find(c => c.id.toString() === storedClientId);
+      if (client) {
+        this.selectedClientId = storedClientId;
+        this.selectedClient = client;
+        this.clientSearchTerm = storedClientName;
+        
+        // Load portfolios for the restored client
+        this.loadPortfoliosForClient();
+        this.loadInsightsForClient();
+        this.loadMarketNews();
+        
+        console.log('Restored selected client:', client.name);
+      }
+    }
   }
 
   private loadClientsFromAPI(): void {
@@ -515,6 +604,9 @@ export class MainAppComponent implements OnDestroy {
     }
 
     this.isGeneratingInsight = true;
+    
+    // Start the loading step animation
+    this.startLoadingStepAnimation();
     
     this.insightsService.generateInsight(
       this.selectedPortfolioId, 
@@ -560,21 +652,80 @@ export class MainAppComponent implements OnDestroy {
   }
   
   createPortfolio(): void {
-    // Create new portfolio
+    // Check if a client is selected
+    if (!this.selectedClient) {
+      this.showErrorNotification('Please select a client before creating a portfolio');
+      return;
+    }
+    
+    // Show the portfolio creation modal
+    this.showCreatePortfolioModal = true;
+  }
+
+  onCloseCreatePortfolioModal(): void {
+    this.showCreatePortfolioModal = false;
+  }
+
+  onPortfolioCreated(newPortfolio: any): void {
+    console.log('New portfolio created:', newPortfolio);
+    
+    // Add the new portfolio to the current list
+    this.portfolios.push(newPortfolio);
+    
+    // Update the portfolios count
+    this.portfoliosCount = this.portfolios.length;
+    
+    // Show success notification
+    this.showSuccessNotification(`Portfolio "${newPortfolio.name}" created successfully!`);
+  }
+
+  showSuccessNotification(message: string): void {
+    this.notificationMessage = message;
+    this.notificationType = 'success';
+    this.showNotification = true;
+    
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 3000);
+  }
+
+  showErrorNotification(message: string): void {
+    this.notificationMessage = message;
+    this.notificationType = 'error';
+    this.showNotification = true;
+    
+    // Auto-hide after 5 seconds for errors
+    setTimeout(() => {
+      this.showNotification = false;
+    }, 5000);
+  }
+
+  closeNotification(): void {
+    this.showNotification = false;
   }
   
   viewPortfolio(portfolioId: string): void {
-    // Navigate to portfolio detail page with client information
+    // Navigate to portfolio detail page with client information and source tab
     this.router.navigate(['/portfolio', portfolioId], {
       queryParams: {
         clientId: this.selectedClientId,
-        clientName: this.selectedClient?.name || ''
+        clientName: this.selectedClient?.name || '',
+        sourceTab: this.activeTab // Track which tab the user came from
       }
     });
   }
   
   generatePortfolioInsight(portfolioId: string): void {
-    // Generate insight for specific portfolio
+    // Switch to AI Insights tab
+    this.setActiveTab('insights');
+    
+    // Set the selected portfolio
+    this.selectedPortfolioId = portfolioId;
+    this.selectedPortfolio = this.portfolios.find(p => p.id.toString() === portfolioId);
+    
+    // Generate insight for the selected portfolio
+    this.generateInsight();
   }
   
   viewInsight(insight: InvestmentInsight): void {
@@ -796,6 +947,20 @@ export class MainAppComponent implements OnDestroy {
     }
     
     return debugText;
+  }
+
+  copyDebugInfo(): void {
+    const debugText = this.formatDebugInfo();
+    if (debugText && debugText !== 'No debug information available') {
+      navigator.clipboard.writeText(debugText).then(() => {
+        this.showSuccessNotification('Debug info copied to clipboard!');
+      }).catch((err) => {
+        console.error('Failed to copy debug info:', err);
+        this.showErrorNotification('Failed to copy debug info to clipboard');
+      });
+    } else {
+      this.showErrorNotification('No debug information available to copy');
+    }
   }
 
   /**
@@ -1118,7 +1283,8 @@ export class MainAppComponent implements OnDestroy {
           this.marketNews = response.headlines.map((newsItem: any) => ({
             headline: newsItem.headline || newsItem,
             summary: newsItem.summary || newsItem.headline || newsItem,
-            url: newsItem.url || 'https://finnhub.io' // Use actual article URL or fallback
+            url: newsItem.url || 'https://finnhub.io', // Use actual article URL or fallback
+            originalTime: newsItem.originalTime || null // Include original posting time
           }));
           this.lastNewsUpdate = new Date();
           console.log('Loaded market news:', this.marketNews);
@@ -1127,9 +1293,9 @@ export class MainAppComponent implements OnDestroy {
           console.error('Error loading market news:', error);
           // Set default news if API fails
           this.marketNews = [
-            { headline: 'Market Update', summary: 'Financial markets continue to show resilience amid economic data releases.' },
-            { headline: 'Investment Trends', summary: 'Investors focus on sector rotation and portfolio diversification strategies.' },
-            { headline: 'Economic Outlook', summary: 'Analysts project steady growth with continued market volatility expected.' }
+            { headline: 'Market Update', summary: 'Financial markets continue to show resilience amid economic data releases.', originalTime: null },
+            { headline: 'Investment Trends', summary: 'Investors focus on sector rotation and portfolio diversification strategies.', originalTime: null },
+            { headline: 'Economic Outlook', summary: 'Analysts project steady growth with continued market volatility expected.', originalTime: null }
           ];
         }
       });
@@ -1158,9 +1324,9 @@ export class MainAppComponent implements OnDestroy {
       catchError((error) => {
         console.error(`❌ AI microservice not responding:`, error);
         this.marketNews = [
-          { headline: 'Service Unavailable', summary: 'AI microservice is not responding. Please check if it is running.' },
-          { headline: 'Portfolio Update', summary: 'Portfolio analysis shows continued market opportunities and strategic positioning.' },
-          { headline: 'Investment Strategy', summary: 'Focus on diversification and risk management for optimal portfolio performance.' }
+          { headline: 'Service Unavailable', summary: 'AI microservice is not responding. Please check if it is running.', originalTime: null },
+          { headline: 'Portfolio Update', summary: 'Portfolio analysis shows continued market opportunities and strategic positioning.', originalTime: null },
+          { headline: 'Investment Strategy', summary: 'Focus on diversification and risk management for optimal portfolio performance.', originalTime: null }
         ];
         return of({ headlines: [] });
       })
@@ -1232,7 +1398,8 @@ export class MainAppComponent implements OnDestroy {
           const portfolioNews = response.headlines.map((newsItem: any) => ({
             headline: newsItem.headline || newsItem,
             summary: newsItem.summary || newsItem.headline || newsItem,
-            url: newsItem.url || 'https://finnhub.io' // Use actual article URL or fallback
+            url: newsItem.url || 'https://finnhub.io', // Use actual article URL or fallback
+            originalTime: newsItem.originalTime || null // Include original posting time
           }));
           
           // Cache the news for this portfolio
@@ -1250,9 +1417,9 @@ export class MainAppComponent implements OnDestroy {
           console.log(`🔄 Setting fallback news due to error`);
           // Set default news if API fails
           this.marketNews = [
-            { headline: 'Portfolio Update', summary: 'Portfolio analysis shows continued market opportunities and strategic positioning.' },
-            { headline: 'Investment Strategy', summary: 'Focus on diversification and risk management for optimal portfolio performance.' },
-            { headline: 'Market Analysis', summary: 'Current market conditions support strategic portfolio adjustments and rebalancing.' }
+            { headline: 'Portfolio Update', summary: 'Portfolio analysis shows continued market opportunities and strategic positioning.', originalTime: null },
+            { headline: 'Investment Strategy', summary: 'Focus on diversification and risk management for optimal portfolio performance.', originalTime: null },
+            { headline: 'Market Analysis', summary: 'Current market conditions support strategic portfolio adjustments and rebalancing.', originalTime: null }
           ];
         }
       });
@@ -1260,5 +1427,11 @@ export class MainAppComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.stopPortfolioCarousel();
+  }
+
+  private startLoadingStepAnimation(): void {
+    // This method can be used to animate through loading steps
+    // For now, we'll keep it simple and let the CSS handle the animation
+    console.log('Starting AI insight generation...');
   }
 } 
