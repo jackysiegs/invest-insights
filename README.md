@@ -31,8 +31,8 @@ In future development I plan to train and implement my own investment insight mo
 - Java 17 or higher
 - Node.js 18 or higher
 - Docker and Docker Compose
-- OpenAI API key
-- Finnhub API key
+- OpenAI API key https://openai.com/index/openai-api/
+- Finnhub API key https://finnhub.io/
 
 ## Quick Setup
 
@@ -48,8 +48,6 @@ Create a `.env` file in the `ai_microservice/` directory:
 OPENAI_API_KEY=your_openai_api_key_here
 FINNHUB_API_KEY=your_finnhub_api_key_here
 ```
-
-**Note**: The `.env` file is ignored by Git for security. You need to create your own with your actual API keys.
 
 ### 3. Start the Database (Automatic Initialization)
 ```bash
