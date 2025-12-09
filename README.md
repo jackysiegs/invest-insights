@@ -263,14 +263,6 @@ docker-compose exec -T postgres psql -U iiAdmin -d invest_insights -c "SELECT us
 docker-compose exec -T postgres psql -U iiAdmin -d invest_insights -c "SELECT COUNT(*) FROM client;"
 ```
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
 ## Latest Features (July 2025)
 
 ### **Version Tracking System**
